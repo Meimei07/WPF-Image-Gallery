@@ -1,0 +1,129 @@
+﻿<Window x:Class="WPF_Image_Gallery.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Image_Gallery"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="This PC" Height="450" Width="800">
+    <!--<Window.Resources>
+        <DataTemplate x:Key="IconTemplate">
+            <Border Background="Transparent">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                    <Image Source="{Binding Icon}" Width="20" Height="20"/>
+                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>-->
+    <Window.Resources>
+        <DataTemplate x:Key="IconTemplate">
+            <Border Background="Transparent">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+                    <Image Source="{Binding Icon}" Width="50" Height="50" />
+                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <!--row0-->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <!--column0-->
+            <Menu Grid.Column="0"
+                  FontSize="20">
+                <MenuItem Header="File">
+                    <MenuItem Header="Save"/>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Copy"/>
+                    <MenuItem Header="Delete"/>
+                    <MenuItem Header="Insert"/>
+                </MenuItem>
+            </Menu>
+            
+            <!--column1-->
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal">
+                
+                <TextBox
+                    Name="txtSearch"
+                    GotFocus="txtSearch_GotFocus"
+                    LostFocus="txtSearch_LostFocus"
+                     
+                    Width="300"
+                    Margin="10,0,10,0"
+                    FontSize="20"
+                    Text="Search"
+                    Padding="5"
+                />
+                <ComboBox
+                    Name="cmbExtension"
+                    Width="70"
+                />
+            </StackPanel>
+        </Grid>
+        
+        <!--row1-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <!--column0-->
+            <!--<TreeView Grid.Column="0"
+                      Name="treeView"
+                      FontSize="15"
+                      Margin="5"
+                      ItemTemplate="{StaticResource IconTemplate}"
+             />-->
+
+            <TreeView Name="treeView" FontSize="15" Margin="5" ItemsSource="{Binding itemModels}">
+                <!--show tree view template-->
+                <TreeView.ItemTemplate>
+                    
+                    <!--show tree hierarchical, will apply the same style to all level hierarchy-->
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        
+                        <StackPanel MouseLeftButtonDown="StackPanel_MouseLeftButtonDown" Orientation="Horizontal">
+                            <Image Source="{Binding Icon}" Width="20" Height="20"/>
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                        
+                    </HierarchicalDataTemplate>
+                    
+                </TreeView.ItemTemplate>
+            </TreeView>
+
+
+            <!--column1-->
+            <ListView Grid.Column="1" 
+                      Name="listView"
+              ItemsSource="{Binding ListViewItemModels}" 
+              ItemTemplate="{StaticResource IconTemplate}" 
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+              ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+        </Grid>
+    </Grid>
+</Window>
