@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:WPF_Image_Gallery"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
+        WindowState="Minimized"
+        ResizeMode="NoResize"
         Title="This PC" Height="450" Width="800">
+    
     <!--<Window.Resources>
         <DataTemplate x:Key="IconTemplate">
             <Border Background="Transparent">
@@ -20,10 +23,31 @@
     <Window.Resources>
         <DataTemplate x:Key="IconTemplate">
             <Border Background="Transparent">
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-                    <Image Source="{Binding Icon}" Width="50" Height="50" />
-                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" />
-                </StackPanel>
+                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                    <Image Source="{Binding Icon}" Width="20" Height="20" />
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Bottom" />
+                    <TextBlock Text="{Binding Extension}"/>
+                    <TextBlock Text="{Binding Size}"/>
+                </StackPanel>-->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition MinWidth="300"/>
+                        <ColumnDefinition MinWidth="50"/>
+                        <ColumnDefinition MinWidth="50"/>
+                        <ColumnDefinition MinWidth="40"/>
+                        <ColumnDefinition MinWidth="70"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0" Source="{Binding Icon}" Width="17" Height="17"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Bottom" Padding="5,0"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Extension}" Padding="5,0" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Size}" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="4" Text="KB"/>
+                    <TextBlock Grid.Column="5" Text="{Binding CreateDate}" HorizontalAlignment="Right" Margin="0,0,6,0"/>
+                    <TextBlock Grid.Column="6" Text="{Binding CreateTime}" HorizontalAlignment="Right"/>
+                </Grid>
             </Border>
         </DataTemplate>
     </Window.Resources>
@@ -36,7 +60,7 @@
         </Grid.RowDefinitions>
         
         <!--row0-->
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Background="WhiteSmoke">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -44,7 +68,8 @@
             
             <!--column0-->
             <Menu Grid.Column="0"
-                  FontSize="20">
+                  FontSize="17"
+                  Background="WhiteSmoke">
                 <MenuItem Header="File">
                     <MenuItem Header="Save"/>
                 </MenuItem>
@@ -57,22 +82,23 @@
             
             <!--column1-->
             <StackPanel Grid.Column="1"
-                        Orientation="Horizontal">
+                        Orientation="Horizontal"
+                        Margin="20,0,0,0">
                 
+                <ComboBox
+                    Name="cmbExtension"
+                    Width="70"
+                />
                 <TextBox
                     Name="txtSearch"
                     GotFocus="txtSearch_GotFocus"
                     LostFocus="txtSearch_LostFocus"
                      
-                    Width="300"
+                    Width="290"
                     Margin="10,0,10,0"
-                    FontSize="20"
+                    FontSize="16"
                     Text="Search"
                     Padding="5"
-                />
-                <ComboBox
-                    Name="cmbExtension"
-                    Width="70"
                 />
             </StackPanel>
         </Grid>
@@ -84,7 +110,6 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <!--column0-->
             <!--<TreeView Grid.Column="0"
                       Name="treeView"
                       FontSize="15"
@@ -92,6 +117,7 @@
                       ItemTemplate="{StaticResource IconTemplate}"
              />-->
 
+            <!--column0 tree view-->
             <TreeView Name="treeView" FontSize="15" Margin="5" ItemsSource="{Binding itemModels}">
                 <!--show tree view template-->
                 <TreeView.ItemTemplate>
@@ -110,20 +136,46 @@
             </TreeView>
 
 
-            <!--column1-->
-            <ListView Grid.Column="1" 
-                      Name="listView"
-              ItemsSource="{Binding ListViewItemModels}" 
-              ItemTemplate="{StaticResource IconTemplate}" 
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-              ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <!--column1 list view-->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                
+                <!--row0-->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.6*"/>
+                        <ColumnDefinition Width="0.3*"/>
+                        <ColumnDefinition Width="0.2*"/>
+                        <ColumnDefinition Width="0.3*"/>
+                    </Grid.ColumnDefinitions>
 
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-            </ListView>
+                    <TextBlock Grid.Column="0" Text="Name" FontSize="15"/>
+                    <TextBlock Grid.Column="1" Text="Extension" FontSize="15" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="Size" FontSize="15" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="3" Text="Create Date" FontSize="15" HorizontalAlignment="Center"/>
+             
+                </Grid>
+                
+                <!--row1-->
+                <ListView Grid.Row="1" 
+                          Name="listView"
+                          Margin="0,5,0,0"
+                          ItemsSource="{Binding ListViewItemModels}" 
+                          ItemTemplate="{StaticResource IconTemplate}" 
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+                <!--<ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </ListView>-->
+            </Grid>
+            
         </Grid>
     </Grid>
 </Window>

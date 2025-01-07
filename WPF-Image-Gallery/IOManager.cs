@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Shapes;
+using WPF_Image_Gallery.Model;
 
 namespace WPF_Image_Gallery
 {
@@ -23,9 +25,26 @@ namespace WPF_Image_Gallery
             }
             return folderNames;
         }
-        public List<string> GetFiles(string path)
+        //public List<string> GetFiles(string path)
+        //{
+        //    List<string> fileNames = new List<string>();
+        //    string[] fileExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp", ".svg" };
+
+        //    DirectoryInfo rootFolder = new DirectoryInfo(path);
+        //    FileInfo[] files = rootFolder.GetFiles();
+
+        //    foreach (FileInfo file in files)
+        //    {
+        //        if(fileExtensions.Contains(file.Extension.ToLower())) 
+        //            fileNames.Add(file.Name);
+        //    }
+        //    return fileNames;
+        //}
+        
+        public List<ListViewData> GetFiles(string path)
         {
-            List<string> fileNames = new List<string>();
+            //List<string> fileNames = new List<string>();
+            List<ListViewData> datas = new List<ListViewData>();
             string[] fileExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp", ".svg" };
 
             DirectoryInfo rootFolder = new DirectoryInfo(path);
@@ -33,11 +52,15 @@ namespace WPF_Image_Gallery
 
             foreach (FileInfo file in files)
             {
-                if(fileExtensions.Contains(file.Extension.ToLower())) 
-                    fileNames.Add(file.Name);
-            }
-            return fileNames;
-        }
+                double fileSizeinKb = Math.Ceiling(file.Length / 1024.0);
 
+                DateTime createDate = file.CreationTime;
+                string date = createDate.Date.ToShortDateString();
+                string time = createDate.ToString("HH:mm:ss");
+
+                datas.Add(new ListViewData(file.Name, file.Extension, fileSizeinKb, date, time));
+            }
+            return datas;
+        }
     }
 }

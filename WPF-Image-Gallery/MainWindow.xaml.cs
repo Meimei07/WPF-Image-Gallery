@@ -139,7 +139,7 @@ namespace WPF_Image_Gallery
                     //VisualTreeHelper.GetParent() method help to retrieve/find the parent of the clicked stackPanel
                     DependencyObject parent = VisualTreeHelper.GetParent(stackPanel);
 
-                    while (parent != null) //loop until the top level of tree
+                    while (parent != null) //loop until the top level of tree, to get full path of the clicked stackPanel
                     {
                         if (parent is TreeViewItem treeViewItem && treeViewItem.DataContext is TreeViewItemModel parentItem)
                         {
@@ -160,10 +160,11 @@ namespace WPF_Image_Gallery
 
                     string rootPath = "pack://application:,,,/Images/";
 
-                    List<string> folders = new IOManager().GetFiles(fullPath);
-                    foreach (string folder in folders)
+                    //List<string> folders = new IOManager().GetFiles(fullPath);
+                    List<ListViewData> folders = new IOManager().GetFiles(fullPath);
+                    foreach (ListViewData folder in folders)
                     {
-                        ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "file.png", Name = folder });
+                        ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "file.png", Name = folder.Name, Extension = folder.Extension, Size = folder.Size, CreateDate = folder.CreateDate, CreateTime = folder.CreateTime });
                     }
                 }
             }

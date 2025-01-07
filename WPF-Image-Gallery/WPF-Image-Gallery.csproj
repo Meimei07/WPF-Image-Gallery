@@ -66,6 +66,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\ListViewData.cs" />
     <Compile Include="Model\ListViewItemModel.cs" />
     <Compile Include="Model\TreeViewItemModel.cs" />
     <Page Include="MainWindow.xaml">
