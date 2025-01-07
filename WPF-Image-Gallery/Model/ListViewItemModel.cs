@@ -14,5 +14,6 @@ namespace WPF_Image_Gallery.Model
         public double Size { get; set; }
         public string CreateDate { get; set; }
         public string CreateTime { get; set; }
+        public string FullPath { get; set; }
     }
 }

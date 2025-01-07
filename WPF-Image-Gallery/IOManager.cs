@@ -56,7 +56,7 @@ namespace WPF_Image_Gallery
 
                 DateTime createDate = file.CreationTime;
                 string date = createDate.Date.ToShortDateString();
-                string time = createDate.ToString("HH:mm:ss");
+                string time = createDate.ToString("HH:mm");
 
                 datas.Add(new ListViewData(file.Name, file.Extension, fileSizeinKb, date, time));
             }

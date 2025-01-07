@@ -9,7 +9,7 @@
         WindowState="Minimized"
         ResizeMode="NoResize"
         Title="This PC" Height="450" Width="800">
-    
+
     <!--<Window.Resources>
         <DataTemplate x:Key="IconTemplate">
             <Border Background="Transparent">
@@ -23,49 +23,52 @@
     <Window.Resources>
         <DataTemplate x:Key="IconTemplate">
             <Border Background="Transparent">
-                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                    <Image Source="{Binding Icon}" Width="20" Height="20" />
-                    <TextBlock Text="{Binding Name}" VerticalAlignment="Bottom" />
-                    <TextBlock Text="{Binding Extension}"/>
-                    <TextBlock Text="{Binding Size}"/>
-                </StackPanel>-->
-                <Grid>
+                
+                <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition MinWidth="300"/>
-                        <ColumnDefinition MinWidth="50"/>
-                        <ColumnDefinition MinWidth="50"/>
-                        <ColumnDefinition MinWidth="40"/>
+                        <ColumnDefinition MinWidth="310"/>
+                        <ColumnDefinition MinWidth="60"/>
                         <ColumnDefinition MinWidth="70"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition MinWidth="150"/>
                     </Grid.ColumnDefinitions>
 
-                    <Image Grid.Column="0" Source="{Binding Icon}" Width="17" Height="17"/>
-                    <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Bottom" Padding="5,0"/>
-                    <TextBlock Grid.Column="2" Text="{Binding Extension}" Padding="5,0" HorizontalAlignment="Left"/>
-                    <TextBlock Grid.Column="3" Text="{Binding Size}" HorizontalAlignment="Right"/>
-                    <TextBlock Grid.Column="4" Text="KB"/>
-                    <TextBlock Grid.Column="5" Text="{Binding CreateDate}" HorizontalAlignment="Right" Margin="0,0,6,0"/>
-                    <TextBlock Grid.Column="6" Text="{Binding CreateTime}" HorizontalAlignment="Right"/>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,10,0">
+                        <Image Source="{Binding Icon}" Width="17" Height="17"/>
+                        <TextBlock Text="{Binding Name}"/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="{Binding Extension}"/>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding Size}"/>
+                        <TextBlock Text="KB"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
+                        <TextBlock Text="{Binding CreateDate}" Margin="0,0,7,0"/>
+                        <TextBlock Text="{Binding CreateTime}"/>
+                    </StackPanel>
                 </Grid>
+
             </Border>
         </DataTemplate>
     </Window.Resources>
 
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="17*"/>
+            <ColumnDefinition Width="83*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
+
         <!--row0-->
-        <Grid Grid.Row="0" Background="WhiteSmoke">
+        <Grid Grid.Row="0" Background="WhiteSmoke" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            
+
             <!--column0-->
             <Menu Grid.Column="0"
                   FontSize="17"
@@ -79,12 +82,12 @@
                     <MenuItem Header="Insert"/>
                 </MenuItem>
             </Menu>
-            
+
             <!--column1-->
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         Margin="20,0,0,0">
-                
+
                 <ComboBox
                     Name="cmbExtension"
                     Width="70"
@@ -102,9 +105,9 @@
                 />
             </StackPanel>
         </Grid>
-        
+
         <!--row1-->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.25*"/>
                 <ColumnDefinition/>
@@ -118,20 +121,20 @@
              />-->
 
             <!--column0 tree view-->
-            <TreeView Name="treeView" FontSize="15" Margin="5" ItemsSource="{Binding itemModels}">
+            <TreeView Name="treeView" FontSize="13" Margin="5" ItemsSource="{Binding itemModels}">
                 <!--show tree view template-->
                 <TreeView.ItemTemplate>
-                    
+
                     <!--show tree hierarchical, will apply the same style to all level hierarchy-->
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                        
+
                         <StackPanel MouseLeftButtonDown="StackPanel_MouseLeftButtonDown" Orientation="Horizontal">
                             <Image Source="{Binding Icon}" Width="20" Height="20"/>
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
-                        
+
                     </HierarchicalDataTemplate>
-                    
+
                 </TreeView.ItemTemplate>
             </TreeView>
 
@@ -142,23 +145,22 @@
                     <RowDefinition Height="25"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                
+
                 <!--row0-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.6*"/>
-                        <ColumnDefinition Width="0.3*"/>
                         <ColumnDefinition Width="0.2*"/>
-                        <ColumnDefinition Width="0.3*"/>
+                        <ColumnDefinition Width="0.05*"/>
+                        <ColumnDefinition Width="0.05*"/>
+                        <ColumnDefinition Width="0.1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Text="Name" FontSize="15"/>
-                    <TextBlock Grid.Column="1" Text="Extension" FontSize="15" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="2" Text="Size" FontSize="15" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="3" Text="Create Date" FontSize="15" HorizontalAlignment="Center"/>
-             
+                    <TextBlock Grid.Column="0" Text="Name"/>
+                    <TextBlock Grid.Column="1" Text="Type"/>
+                    <TextBlock Grid.Column="2" Text="Size" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="3" Text="Create Date" HorizontalAlignment="Center"/>
                 </Grid>
-                
+
                 <!--row1-->
                 <ListView Grid.Row="1" 
                           Name="listView"
@@ -175,7 +177,7 @@
                     </ListView.ItemsPanel>
                 </ListView>-->
             </Grid>
-            
+
         </Grid>
     </Grid>
 </Window>

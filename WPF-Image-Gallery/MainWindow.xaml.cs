@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization.Configuration;
-using static MaterialDesignThemes.Wpf.Theme.ToolBar;
 
 using System.IO;
 using System.Collections.ObjectModel;
@@ -161,11 +160,34 @@ namespace WPF_Image_Gallery
                     string rootPath = "pack://application:,,,/Images/";
 
                     //List<string> folders = new IOManager().GetFiles(fullPath);
-                    List<ListViewData> folders = new IOManager().GetFiles(fullPath);
-                    foreach (ListViewData folder in folders)
+                    List<ListViewData> files = new IOManager().GetFiles(fullPath);
+                    foreach (ListViewData file in files)
                     {
-                        ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "file.png", Name = folder.Name, Extension = folder.Extension, Size = folder.Size, CreateDate = folder.CreateDate, CreateTime = folder.CreateTime });
+                        ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "file.png", Name = getName(file), Extension = file.Extension, Size = file.Size, CreateDate = file.CreateDate, CreateTime = file.CreateTime, FullPath = fullPath });
                     }
+                }
+            }
+        }
+
+        private string getName(ListViewData file)
+        {
+            string nameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(file.Name);
+            return nameWithoutExtension;
+        }
+
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                if (sender is Grid grid && grid.DataContext is ListViewItemModel item)
+                {
+                    //MessageBox.Show($"file name: {item.FullPath}");
+
+                    string fullPath = System.IO.Path.Combine(item.FullPath, item.Name+item.Extension);
+                    //List<ListViewData> files = new IOManager().GetFiles(fullPath);
+
+                    frmViewImage frmViewImage = new frmViewImage(fullPath);
+                    frmViewImage.ShowDialog();
                 }
             }
         }
