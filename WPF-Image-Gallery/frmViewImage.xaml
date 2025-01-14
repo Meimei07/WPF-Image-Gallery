@@ -14,14 +14,14 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         
-        <!--row0-->
+        <!--row0 image-->
         <Image Name="img" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" MouseWheel="img_MouseWheel" RenderTransformOrigin="0.5,0.5">
             <Image.RenderTransform>
                 <ScaleTransform x:Name="ImageScale" ScaleX="1" ScaleY="1" />
             </Image.RenderTransform>
         </Image>
 
-        <!--row1-->
+        <!--row1 button-->
         <Border Grid.Row="1"
                 CornerRadius="25"
                 Background="MistyRose"
@@ -34,6 +34,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
+                <!--column0 zoom in/out-->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Name="btnZoomIn" Click="btnZoomIn_Click"
                             BorderThickness="0" Background="MistyRose" Margin="0,0,15,0">
@@ -45,9 +46,16 @@
                     </Button>
                 </StackPanel>
                 
+                <!--column1 previous/next-->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Image Margin="0,0,10,0" Source="/Images/preivous.png"/>
-                    <Image Margin="10,0,0,0" Source="/Images/next.png"/>
+                    <Button Name="btnPrevious" Click="btnPrevious_Click"
+                            BorderThickness="0" Background="MistyRose">
+                        <Image Margin="0,0,10,0" Source="/Images/preivous.png"/>
+                    </Button>
+                    <Button Name="btnNext" Click="btnNext_Click"
+                            BorderThickness="0" Background="MistyRose">
+                        <Image Margin="10,0,0,0" Source="/Images/next.png"/>
+                    </Button>
                 </StackPanel>
                 
             </Grid>

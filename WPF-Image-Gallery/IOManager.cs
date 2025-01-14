@@ -25,25 +25,25 @@ namespace WPF_Image_Gallery
             }
             return folderNames;
         }
-        //public List<string> GetFiles(string path)
-        //{
-        //    List<string> fileNames = new List<string>();
-        //    string[] fileExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp", ".svg" };
 
-        //    DirectoryInfo rootFolder = new DirectoryInfo(path);
-        //    FileInfo[] files = rootFolder.GetFiles();
+        public List<string> GetFilesInString(string path)
+        {
+            List<string> fileNames = new List<string>();
+            string[] fileExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp", ".svg" };
 
-        //    foreach (FileInfo file in files)
-        //    {
-        //        if(fileExtensions.Contains(file.Extension.ToLower())) 
-        //            fileNames.Add(file.Name);
-        //    }
-        //    return fileNames;
-        //}
-        
+            DirectoryInfo rootFolder = new DirectoryInfo(path);
+            FileInfo[] files = rootFolder.GetFiles();
+
+            foreach (FileInfo file in files)
+            {
+                if (fileExtensions.Contains(file.Extension.ToLower()))
+                    fileNames.Add(file.Name);
+            }
+            return fileNames;
+        }
+
         public List<ListViewData> GetFiles(string path)
         {
-            //List<string> fileNames = new List<string>();
             List<ListViewData> datas = new List<ListViewData>();
             string[] fileExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp", ".svg" };
 
@@ -52,13 +52,16 @@ namespace WPF_Image_Gallery
 
             foreach (FileInfo file in files)
             {
-                double fileSizeinKb = Math.Ceiling(file.Length / 1024.0);
+                if(fileExtensions.Contains(file.Extension.ToLower()))
+                {
+                    double fileSizeinKb = Math.Ceiling(file.Length / 1024.0);
 
-                DateTime createDate = file.CreationTime;
-                string date = createDate.Date.ToShortDateString();
-                string time = createDate.ToString("HH:mm");
+                    DateTime createDate = file.CreationTime;
+                    string date = createDate.Date.ToShortDateString();
+                    string time = createDate.ToString("HH:mm");
 
-                datas.Add(new ListViewData(file.Name, file.Extension, fileSizeinKb, date, time));
+                    datas.Add(new ListViewData(file.Name, file.Extension, fileSizeinKb, date, time));
+                }
             }
             return datas;
         }

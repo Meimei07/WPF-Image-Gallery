@@ -22,27 +22,19 @@ namespace WPF_Image_Gallery
     public partial class frmViewImage : Window
     {
         private double zoomFactor = 1.0;
+        private string fullPath;
+        private IOManager ioManager = new IOManager();
+
         public frmViewImage(string fullPath)
         {
             InitializeComponent();
+            this.fullPath = fullPath;
 
             try
             {
                 if (File.Exists(fullPath))
                 {
-                    //MessageBox.Show(fullPath);
                     img.Source = new BitmapImage(new Uri(fullPath));
-
-                    //BitmapImage bitmap = new BitmapImage(new Uri(fullPath));
-
-                    //// Create a WriteableBitmap from the BitmapImage
-                    //WriteableBitmap writeableBitmap = new WriteableBitmap(bitmap);
-
-                    //// Set the Image source to the WriteableBitmap
-                    //img.Source = writeableBitmap;
-
-                    //// Optionally, adjust the Stretch property for scaling
-                    //img.Stretch = Stretch.Uniform;
                 }
                 else
                 {
@@ -63,9 +55,16 @@ namespace WPF_Image_Gallery
             }
             else // Scroll Down -> Zoom Out
             {
-                zoomFactor = (zoomFactor > 0.2) ? zoomFactor - 0.1 : 0.1;
+                //zoomFactor = (zoomFactor > 0.2) ? zoomFactor - 0.1 : 0.1;
+                if(zoomFactor > 0.2)
+                {
+                    zoomFactor -= 0.1;
+                }
+                else
+                {
+                    zoomFactor = 0.1;
+                }
             }
-
             applyZoom();
         }
 
@@ -83,7 +82,7 @@ namespace WPF_Image_Gallery
 
         private void btnZoomOut_Click(object sender, RoutedEventArgs e)
         {
-            zoomFactor = (zoomFactor > 0.2) ? zoomFactor - 0.1 : 0.1;  // Decrease zoom factor but avoid going too small
+            //zoomFactor = (zoomFactor > 0.2) ? zoomFactor - 0.1 : 0.1;  // Decrease zoom factor but avoid going too small
             if(zoomFactor > 0.2)
             {
                 zoomFactor -= 0.1;
@@ -93,6 +92,40 @@ namespace WPF_Image_Gallery
                 zoomFactor = 0.1;
             }
             applyZoom();
+        }
+
+        private void btnPrevious_Click(object sender, RoutedEventArgs e)
+        {
+            string rootPath = Path.GetDirectoryName(fullPath);
+            string fileName = Path.GetFileName(fullPath); //name with extension
+
+            List<string> files = ioManager.GetFilesInString(rootPath);
+            int fileIndex = files.FindIndex(f => f == fileName);
+
+            if(fileIndex > 0)
+            {
+                //can previous
+                fileIndex -= 1;
+                fullPath = Path.Combine(rootPath, files[fileIndex]);
+                img.Source = new BitmapImage(new Uri(fullPath));
+            }
+        }
+
+        private void btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            string rootPath = Path.GetDirectoryName(fullPath);
+            string fileName = Path.GetFileName(fullPath); //name with extension
+
+            List<string> files = ioManager.GetFilesInString(rootPath);
+            int fileIndex = files.FindIndex(f => f == fileName);
+
+            if (fileIndex < files.Count - 1)
+            {
+                //can next
+                fileIndex += 1;
+                fullPath = Path.Combine(rootPath, files[fileIndex]);
+                img.Source = new BitmapImage(new Uri(fullPath));
+            }
         }
     }
 }
