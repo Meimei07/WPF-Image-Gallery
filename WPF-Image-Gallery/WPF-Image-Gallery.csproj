@@ -163,6 +163,15 @@
     <Resource Include="Images\zoom in.png" />
     <Resource Include="Images\zoom out.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\hard-drive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\folder %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\image.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

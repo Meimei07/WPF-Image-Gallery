@@ -25,14 +25,14 @@
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,10,0">
                         <Image Source="{Binding Icon}" Width="17" Height="17"/>
-                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}" Margin="5,0,0,0"/>
                     </StackPanel>
                     <TextBlock Grid.Column="1" Text="{Binding Extension}"/>
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left">
                         <TextBlock Text="{Binding Size}"/>
                         <TextBlock Text=" KB"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
                         <TextBlock Text="{Binding CreateDate}" Margin="0,0,7,0"/>
                         <TextBlock Text="{Binding CreateTime}"/>
                     </StackPanel>
@@ -92,7 +92,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <!--row0-->
+        <!--row0 path search-->
         <Grid Grid.Row="0" Background="WhiteSmoke" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -100,13 +100,17 @@
             </Grid.ColumnDefinitions>
 
             <!--column0-->
-            <TextBox Grid.Column="0"
-                Name="tbPath" 
-                IsReadOnly="True"
-                     
-                Text="{Binding FullPath}" 
-                FontSize="17"
-            />
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5,5,0,5">
+                <TextBlock Text="Path : " FontSize="17"/>
+                <TextBox Grid.Column="0"
+                    Name="tbPath" 
+                    IsReadOnly="True"
+         
+                    Width="340"
+                    Text="{Binding FullPath}" 
+                    FontSize="15"
+                />
+            </StackPanel>
 
             <!--column1-->
             <StackPanel Grid.Column="1"
@@ -114,7 +118,9 @@
                         Margin="20,0,0,0">
 
                 <ComboBox Name="cmbSearchType"
-                          Width="70">
+                          Width="70" 
+                          Margin="0, 5"
+                          FontSize="15">
                     <ComboBoxItem Content="Name"/>
                     <ComboBoxItem Content="Type"/>
                     <ComboBoxItem Content="Size"/>
@@ -127,16 +133,16 @@
                     LostFocus="tbSearch_LostFocus"
                     TextChanged="tbSearch_TextChanged"
                      
-                    Width="290"
-                    Margin="10,0,10,0"
+                    Width="300"
+                    Margin="5"
                     FontSize="16"
                     Text="Search"
-                    Padding="5"
+                    Padding="5,0"
                 />
             </StackPanel>
         </Grid>
 
-        <!--row1 toolbar delete copy ...-->
+        <!--row1 toolbar delete copy details ...-->
         <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0.2">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -144,7 +150,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     
-                    <ColumnDefinition/>
+                    <ColumnDefinition/> <!--detail button-->
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="3"
@@ -162,17 +168,17 @@
         </Border>
         
         <!--row2-->
-        <Grid Grid.Row="2" Grid.ColumnSpan="2">
+        <Grid Name="gridRow2" Grid.Row="2" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.25*"/> <!--tree view-->
+                <ColumnDefinition Width="150"/> <!--tree view-->
                 <ColumnDefinition Width="2"/> <!--spliter-->
-                <ColumnDefinition/> <!--list view-->
+                <ColumnDefinition Width="*"/> <!--list view-->
                 <ColumnDefinition Width="2"/> <!--spliter-->
-                <ColumnDefinition Width="0.35*"/> <!--details-->
+                <ColumnDefinition MaxWidth="250"/> <!--details-->
             </Grid.ColumnDefinitions>
 
             <!--column0 tree view-->
-            <TreeView Name="treeView" FontSize="13" Margin="5" ItemsSource="{Binding itemModels}">
+            <TreeView Name="treeView" FontSize="13" Padding="5,7,5,5" ItemsSource="{Binding itemModels}">
                 <!--show tree view template-->
                 <TreeView.ItemTemplate>
 
@@ -181,7 +187,7 @@
 
                         <StackPanel MouseLeftButtonDown="StackPanel_MouseLeftButtonDown" Orientation="Horizontal">
                             <Image Source="{Binding Icon}" Width="20" Height="20"/>
-                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="{Binding Name}" Margin="5,0,0,0"/>
                         </StackPanel>
 
                     </HierarchicalDataTemplate>
@@ -202,16 +208,16 @@
                 <!--row0 header-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="250"/>
-                        <ColumnDefinition MinWidth="60"/>
-                        <ColumnDefinition MinWidth="70"/>
-                        <ColumnDefinition MinWidth="150"/>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="150"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" Text="Name"/>
-                    <TextBlock Grid.Column="1" Text="Type"/>
-                    <TextBlock Grid.Column="2" Text="Size" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="3" Text="Create Date" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="Type" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Column="2" Text="Size" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Column="3" Text="Create Date" HorizontalAlignment="Left"/>
                 </Grid>
 
                 <!--row1 list view content-->
@@ -230,7 +236,7 @@
             <GridSplitter Grid.Column="3" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
             <!--column4 details-->
-            <Border Grid.Column="4" BorderBrush="Gray" BorderThickness="0.2">
+            <Border Grid.Column="4" BorderBrush="Gray" BorderThickness="0.2" Name="borderDetails" Visibility="Collapsed" Panel.ZIndex="100">
                 <Grid Name="gridDetails" Margin="5 0">
                     <Grid.RowDefinitions>
                         <RowDefinition/> <!--image-->
@@ -241,7 +247,7 @@
                     <Image  Grid.Row="0" Source="{Binding Icon}"/>
 
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        <Image Source="/Images/file.png" Width="15" Height="15" Margin="0,0,10,0"/>
+                        <Image Source="/Images/image.png" Width="15" Height="15" Margin="0,0,10,0"/>
                         <TextBlock Grid.Row="1" Text="{Binding Name}" VerticalAlignment="Center"/>
                     </StackPanel>
                     

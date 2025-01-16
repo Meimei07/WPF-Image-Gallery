@@ -43,6 +43,10 @@ namespace WPF_Image_Gallery
             
             retrieveFolders();
             listView.DataContext = this;
+
+            borderDetails.Visibility = Visibility.Collapsed;
+            ((ColumnDefinition)gridRow2.ColumnDefinitions[4]).Width = new GridLength(0);
+
             //contentControlDetails.DataContext = this;
         }
 
@@ -68,7 +72,7 @@ namespace WPF_Image_Gallery
             foreach (string subFolderName in subFolderNames)
             {
                 TreeViewItemModel subItemModel = new TreeViewItemModel();
-                subItemModel.Icon = rootPath + "folder.png";
+                subItemModel.Icon = rootPath + "folder (2).png";
                 subItemModel.Name = subFolderName;
 
                 item.Children.Add(subItemModel);               
@@ -85,7 +89,7 @@ namespace WPF_Image_Gallery
             foreach (string drive in drives)
             {
                 TreeViewItemModel treeViewItemModel = new TreeViewItemModel();
-                treeViewItemModel.Icon = rootPath + "folder.png";
+                treeViewItemModel.Icon = rootPath + "hard-drive.png";
                 treeViewItemModel.Name = drive;
 
                 itemModels.Add(treeViewItemModel);
@@ -96,7 +100,7 @@ namespace WPF_Image_Gallery
                     string mainFolderName = folderNames[i];
 
                     TreeViewItemModel folderItemModel = new TreeViewItemModel();
-                    folderItemModel.Icon = rootPath + "folder.png";
+                    folderItemModel.Icon = rootPath + "folder (2).png";
                     folderItemModel.Name = mainFolderName;
 
                     treeViewItemModel.Children.Add(folderItemModel);
@@ -154,7 +158,7 @@ namespace WPF_Image_Gallery
                     List<ListViewData> files = new IOManager().GetFiles(fullPath);
                     foreach (ListViewData file in files)
                     {
-                        ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "file.png", Name = getName(file), Extension = file.Extension, Size = file.Size, CreateDate = file.CreateDate, CreateTime = file.CreateTime, FullPath = fullPath });
+                        ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = getName(file), Extension = file.Extension, Size = file.Size, CreateDate = file.CreateDate, CreateTime = file.CreateTime, FullPath = fullPath });
                     }
 
                     tbPath.Text = fullPath;
@@ -181,11 +185,11 @@ namespace WPF_Image_Gallery
                     frmViewImage.ShowDialog();
                 }
             }
-            else if(e.ClickCount == 1)
+            else if (e.ClickCount == 1)
             {
                 if (sender is Grid grid && grid.DataContext is ListViewItemModel item)
                 {
-                    item.Icon = System.IO.Path.Combine(rootPath, item.FullPath, item.Name+item.Extension);
+                    item.Icon = System.IO.Path.Combine(rootPath, item.FullPath, item.Name + item.Extension);
                     gridDetails.DataContext = item;
                 }
             }
@@ -241,25 +245,50 @@ namespace WPF_Image_Gallery
 
         private void btnDetail_Click(object sender, RoutedEventArgs e)
         {
-            //MessageBox.Show(listView.SelectedItems.Count.ToString());
-            if(listView.SelectedItems.Count == 0)
+            if(borderDetails.Visibility == Visibility.Collapsed)
             {
+                borderDetails.Visibility = Visibility.Visible;
+                ((ColumnDefinition)gridRow2.ColumnDefinitions[4]).Width = new GridLength(0.35, GridUnitType.Star); 
+
+                if(listView.SelectedItem is ListViewItemModel item)
+                {
+                    //gridDetails.DataContext = item;
+                    borderDetails.DataContext = item;
+                }
+                else if(listView.SelectedItem == null)
+                {
+                    borderDetails.DataContext = new ListViewItemModel
+                    {
+                        Icon = rootPath + "folder.png"                       
+                    };
+                }
+            }
+            else
+            {
+                borderDetails.Visibility = Visibility.Collapsed;
+                ((ColumnDefinition)gridRow2.ColumnDefinitions[4]).Width = new GridLength(0);
 
             }
-            else if(listView.SelectedItems.Count > 0)
-            {
-                //MessageBox.Show(listView.SelectedItem.ToString());
-                var selectedListViewItem = listView.SelectedItem as ListViewItemModel;
-                //MessageBox.Show(selectListViewItem.Name);
-                listViewItem = new ListViewItemModel
-                {
-                    Name = selectedListViewItem.Name,
-                    Extension = selectedListViewItem.Extension,
-                    Size = selectedListViewItem.Size,
-                    FullPath = selectedListViewItem.FullPath,
-                    CreateDate = selectedListViewItem.CreateDate
-                };
-            }
+
+            //MessageBox.Show(listView.SelectedItems.Count.ToString());
+            //if(listView.SelectedItems.Count == 0)
+            //{
+
+            //}
+            //else if(listView.SelectedItems.Count > 0)
+            //{
+            //    //MessageBox.Show(listView.SelectedItem.ToString());
+            //    var selectedListViewItem = listView.SelectedItem as ListViewItemModel;
+            //    //MessageBox.Show(selectListViewItem.Name);
+            //    listViewItem = new ListViewItemModel
+            //    {
+            //        Name = selectedListViewItem.Name,
+            //        Extension = selectedListViewItem.Extension,
+            //        Size = selectedListViewItem.Size,
+            //        FullPath = selectedListViewItem.FullPath,
+            //        CreateDate = selectedListViewItem.CreateDate
+            //    };
+            //}
         }
     }
 }
