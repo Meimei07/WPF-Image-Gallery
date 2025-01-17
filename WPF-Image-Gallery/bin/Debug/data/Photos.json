@@ -91,15 +91,6 @@
     },
     {
         "Icon": "pack://application:,,,/Images/image.png",
-        "Name": "search-icon",
-        "Extension": ".png",
-        "Size": 2.0,
-        "CreateDate": "02-Jan-25",
-        "CreateTime": "16:16",
-        "FullPath": "D:\\HTML-CSS\\Amazon project\\header images"
-    },
-    {
-        "Icon": "pack://application:,,,/Images/image.png",
         "Name": "amazon-logo-white",
         "Extension": ".png",
         "Size": 4.0,

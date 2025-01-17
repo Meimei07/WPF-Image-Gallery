@@ -97,13 +97,10 @@ namespace WPF_Image_Gallery
 
             string fullPath = GetFullPath(fileName);
 
-            //string Path = "WPF-Image-Gallery\\WPF-Image-Gallery\\bin\\Debug\\data\\" + fileName + extension;
-            //MessageBox.Show(Path);
             StreamWriter streamWriter = new StreamWriter(fullPath);
             string content = JsonConvert.SerializeObject(obj);
             streamWriter.Write(content);
             streamWriter.Close();
-            MessageBox.Show($"write to {fileName}");
         }
 
         public T Read<T>(string fileName)

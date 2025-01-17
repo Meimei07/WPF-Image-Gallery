@@ -131,9 +131,10 @@
                     Name="tbSearch"
                     GotFocus="tbSearch_GotFocus"
                     LostFocus="tbSearch_LostFocus"
-                    TextChanged="tbSearch_TextChanged"
+                    TextChanged="tbSearch_TextChanged"                   
                      
                     Text="Search"
+                    Foreground="Gray"
                     Width="300"
                     Margin="5"
                     FontSize="16"
