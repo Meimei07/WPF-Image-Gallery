@@ -44,6 +44,7 @@ namespace WPF_Image_Gallery
             retrieveFolders();
             listView.DataContext = this;
 
+            //set detail block to collapsed
             borderDetails.Visibility = Visibility.Collapsed;
             ((ColumnDefinition)gridRow2.ColumnDefinitions[4]).Width = new GridLength(0);
 
@@ -81,9 +82,8 @@ namespace WPF_Image_Gallery
                 recursiveRetrievingFolder(path, subItemModel);
             }
         }
-
-        //retrieve starts from drive of computer
-        private void retrieveFolders()
+      
+        private void retrieveFolders() //retrieve starts from drive of computer
         {
             string[] drives = Environment.GetLogicalDrives();
             foreach (string drive in drives)
@@ -120,7 +120,7 @@ namespace WPF_Image_Gallery
             treeView.ItemsSource = itemModels;
         }
 
-        //single click on treeView, shows images on listView
+        //single click on treeView item, shows images on listView
         private void StackPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //clear the old list, if another left mouse is clicked on tree view item 
@@ -153,15 +153,33 @@ namespace WPF_Image_Gallery
                         parent = VisualTreeHelper.GetParent(parent);
                     }
 
-                    string rootPath = "pack://application:,,,/Images/";
+                    string folderName = System.IO.Path.GetFileName(fullPath); //last folder name
 
-                    List<ListViewData> files = new IOManager().GetFiles(fullPath);
-                    foreach (ListViewData file in files)
+                    //read from file first
+                    List<ListViewItemModel> files = ioManager.Read<List<ListViewItemModel>>(folderName);
+
+                    if (files == null) //if files doesn't exist, 
                     {
-                        ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = getName(file), Extension = file.Extension, Size = file.Size, CreateDate = file.CreateDate, CreateTime = file.CreateTime, FullPath = fullPath });
+                        //tbPath.Text = fullPath;
+                        //return;
+                        
+                        List<ListViewData> filesData = ioManager.GetFiles(fullPath); //get files from computer directly
+                        foreach (ListViewData file in filesData)
+                        {
+                            ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = getName(file), Extension = file.Extension, Size = file.Size, CreateDate = file.CreateDate, CreateTime = file.CreateTime, FullPath = fullPath });
+                        }
+                        ioManager.Write(folderName, ListViewItemModels); //and write to file, so next time no need to read from computer
+                    }
+                    else //if file exist, read from file
+                    {
+                        foreach (ListViewItemModel file in files)
+                        {
+                            ListViewItemModels.Add(file);
+                        }
                     }
 
                     tbPath.Text = fullPath;
+                    //MessageBox.Show(folderName);
                 }
             }
         }
@@ -172,24 +190,26 @@ namespace WPF_Image_Gallery
             return nameWithoutExtension;
         }
 
-        //double click on listView file, shows image in full screen
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2)
+            if (e.ClickCount == 2) //double click on listView file, shows image in full screen
             {
                 if (sender is Grid grid && grid.DataContext is ListViewItemModel item)
                 {
                     string fullPath = System.IO.Path.Combine(item.FullPath, item.Name + item.Extension);
-
-                    frmViewImage frmViewImage = new frmViewImage(fullPath);
+                    //MessageBox.Show(fullPath);
+                    frmViewImage frmViewImage = new frmViewImage(fullPath, tbPath.Text);
                     frmViewImage.ShowDialog();
                 }
             }
-            else if (e.ClickCount == 1)
+            else if (e.ClickCount == 1) //single click, will show info in details block, if it's visible
             {
                 if (sender is Grid grid && grid.DataContext is ListViewItemModel item)
                 {
-                    item.Icon = System.IO.Path.Combine(rootPath, item.FullPath, item.Name + item.Extension);
+                    //item.Icon = System.IO.Path.Combine(rootPath, item.FullPath, item.Name + item.Extension);
+                    string root = System.IO.Path.Combine(rootPath, item.FullPath, item.Name + item.Extension);
+                    photo.Source = new BitmapImage(new Uri(root));
+                    tbFullPath.Text = tbPath.Text;
                     gridDetails.DataContext = item;
                 }
             }
@@ -208,7 +228,7 @@ namespace WPF_Image_Gallery
 
             //MessageBox.Show($"type:{selectedSearchType}, path:{path}");
 
-            List<ListViewData> allFiles = ioManager.GetFiles(path);
+            List<ListViewData> allFiles = ioManager.GetFiles(path); //get all files name from that folder
             List<ListViewData> filterFiles = new List<ListViewData>();
 
             if (selectedSearchType == "Name")
@@ -239,7 +259,7 @@ namespace WPF_Image_Gallery
 
             foreach (ListViewData file in filterFiles)
             {
-                ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "file.png", Name = getName(file), Extension = file.Extension, Size = file.Size, CreateDate = file.CreateDate, CreateTime = file.CreateTime, FullPath = path });
+                ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = getName(file), Extension = file.Extension, Size = file.Size, CreateDate = file.CreateDate, CreateTime = file.CreateTime, FullPath = path });
             }
         }
 
@@ -259,7 +279,9 @@ namespace WPF_Image_Gallery
                 {
                     borderDetails.DataContext = new ListViewItemModel
                     {
-                        Icon = rootPath + "folder.png"                       
+                        Icon = rootPath + "folder.png",
+                        FullPath = tbPath.Text,
+                        Name = tbPath.Text
                     };
                 }
             }
@@ -289,6 +311,39 @@ namespace WPF_Image_Gallery
             //        CreateDate = selectedListViewItem.CreateDate
             //    };
             //}
+        }
+
+        private void listView_Drop(object sender, DragEventArgs e)
+        {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                string folderName = System.IO.Path.GetFileName(tbPath.Text);
+                for(int i=0; i<files.Length; i++)
+                {
+                    FileInfo file = new FileInfo(files[i]);
+                    string fileName = System.IO.Path.GetFileNameWithoutExtension(files[i]);
+                    string extension = file.Extension;
+                    double size = Math.Ceiling(file.Length / 1024.0);
+                    string fullPath = file.DirectoryName;
+                    DateTime createDate = file.CreationTime;
+                    string date = createDate.Date.ToShortDateString();
+                    string time = createDate.ToString("HH:mm");
+
+                    ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = fileName, Extension = extension, Size = size, CreateDate = date, CreateTime = time, FullPath = fullPath });
+
+                    //MessageBox.Show("fullPath: "+fullPath);
+                }
+                ioManager.Write(folderName, ListViewItemModels);
+
+
+                //string extension = System.IO.Path.GetExtension(files[0]);
+                //double size = Math.Ceiling(files[0].Length / 1024.0);
+                //string fullPath = System.IO.Path.GetDirectoryName(files[0]);
+                //MessageBox.Show(fullPath);
+
+            }
         }
     }
 }

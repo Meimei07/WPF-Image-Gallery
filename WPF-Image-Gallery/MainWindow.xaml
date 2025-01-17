@@ -92,27 +92,27 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <!--row0 path search-->
+        <!--row0 path, search-->
         <Grid Grid.Row="0" Background="WhiteSmoke" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <!--column0-->
+            <!--column0 path-->
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5,5,0,5">
                 <TextBlock Text="Path : " FontSize="17"/>
                 <TextBox Grid.Column="0"
                     Name="tbPath" 
                     IsReadOnly="True"
+                    Text="{Binding FullPath}" 
          
                     Width="340"
-                    Text="{Binding FullPath}" 
                     FontSize="15"
                 />
             </StackPanel>
 
-            <!--column1-->
+            <!--column1 combo box, search-->
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         Margin="20,0,0,0">
@@ -133,16 +133,16 @@
                     LostFocus="tbSearch_LostFocus"
                     TextChanged="tbSearch_TextChanged"
                      
+                    Text="Search"
                     Width="300"
                     Margin="5"
                     FontSize="16"
-                    Text="Search"
                     Padding="5,0"
                 />
             </StackPanel>
         </Grid>
 
-        <!--row1 toolbar delete copy details ...-->
+        <!--row1 toolbar: delete, copy, paste, details ...-->
         <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0.2">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -198,7 +198,7 @@
             <!--column1 spliter-->
             <GridSplitter Grid.Column="1" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
-            <!--column2 list view-->
+            <!--column2 header & list view-->
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25"/>
@@ -223,11 +223,13 @@
                 <!--row1 list view content-->
                 <ListView Grid.Row="1" 
                     Name="listView"
-                    Margin="0,5,0,0"
+                    AllowDrop="True"
+                    Drop="listView_Drop"
                     ItemsSource="{Binding ListViewItemModels}" 
                     ItemTemplate="{StaticResource IconTemplate}" 
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    Margin="0,5,0,0"
                 />
 
             </Grid>
@@ -236,15 +238,20 @@
             <GridSplitter Grid.Column="3" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
             <!--column4 details-->
-            <Border Grid.Column="4" BorderBrush="Gray" BorderThickness="0.2" Name="borderDetails" Visibility="Collapsed" Panel.ZIndex="100">
+            <Border Grid.Column="4" 
+                    Name="borderDetails" 
+                    BorderBrush="Gray" BorderThickness="0.2" 
+                    Visibility="Collapsed" 
+                    Panel.ZIndex="100">
+                
                 <Grid Name="gridDetails" Margin="5 0">
                     <Grid.RowDefinitions>
                         <RowDefinition/> <!--image-->
                         <RowDefinition Height="0.2*"/> <!--name-->
-                        <RowDefinition/> <!--more details-->
+                        <RowDefinition/> <!--more info-->
                     </Grid.RowDefinitions>
 
-                    <Image  Grid.Row="0" Source="{Binding Icon}"/>
+                    <Image Name="photo" Grid.Row="0" Source="{Binding Icon}"/>
 
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <Image Source="/Images/image.png" Width="15" Height="15" Margin="0,0,10,0"/>
@@ -254,6 +261,7 @@
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="55"/>
+                            <ColumnDefinition Width="10"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
@@ -265,22 +273,22 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Details" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Details" FontSize="14" HorizontalAlignment="Left"/>
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Type" HorizontalAlignment="Left" FontSize="10"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Extension}" HorizontalAlignment="Right" FontSize="10"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Extension}" HorizontalAlignment="Right" FontSize="10"/>
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Size" HorizontalAlignment="Left" FontSize="10"/>
-                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal"  HorizontalAlignment="Right">
+                        <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal"  HorizontalAlignment="Right">
                             <TextBlock Text="{Binding Size}" FontSize="10"/>
                             <TextBlock Text=" KB" FontSize="10"/>
                         </StackPanel>
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="File location" HorizontalAlignment="Left" FontSize="10"/>
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding FullPath}" HorizontalAlignment="Right" FontSize="10"/>
+                        <TextBlock Name="tbFullPath" Grid.Row="3" Grid.Column="2" Text="{Binding FullPath}" HorizontalAlignment="Right" FontSize="10"/>
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="Create Date" HorizontalAlignment="Left" FontSize="10"/>
-                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CreateDate}" HorizontalAlignment="Right" FontSize="10"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding CreateDate}" HorizontalAlignment="Right" FontSize="10"/>
                     </Grid>
                 </Grid>
             </Border>

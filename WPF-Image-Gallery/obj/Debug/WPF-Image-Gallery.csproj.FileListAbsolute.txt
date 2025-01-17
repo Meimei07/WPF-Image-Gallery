@@ -52,3 +52,5 @@ D:\WPF\WPF-Image-Gallery\WPF-Image-Gallery\obj\Debug\WPF-Image-Gallery.pdb
 D:\WPF\WPF-Image-Gallery\WPF-Image-Gallery\bin\Debug\System.Drawing.Common.dll
 D:\WPF\WPF-Image-Gallery\WPF-Image-Gallery\bin\Debug\System.Drawing.Common.pdb
 D:\WPF\WPF-Image-Gallery\WPF-Image-Gallery\bin\Debug\System.Drawing.Common.xml
+D:\WPF\WPF-Image-Gallery\WPF-Image-Gallery\bin\Debug\Newtonsoft.Json.dll
+D:\WPF\WPF-Image-Gallery\WPF-Image-Gallery\bin\Debug\Newtonsoft.Json.xml

@@ -8,10 +8,15 @@ using System.Windows;
 using System.Windows.Shapes;
 using WPF_Image_Gallery.Model;
 
+using Newtonsoft.Json;
+
 namespace WPF_Image_Gallery
 {
     public class IOManager
     {
+        private string path = @".\data";
+        private string extension = ".json";
+
         public List<string> GetFolders(string path)
         {
             List<string> folderNames = new List<string>();
@@ -37,7 +42,9 @@ namespace WPF_Image_Gallery
             foreach (FileInfo file in files)
             {
                 if (fileExtensions.Contains(file.Extension.ToLower()))
-                    fileNames.Add(file.Name);
+                { 
+                    fileNames.Add(file.Name); 
+                }
             }
             return fileNames;
         }
@@ -64,6 +71,57 @@ namespace WPF_Image_Gallery
                 }
             }
             return datas;
+        }
+
+        private void CreateFolder()
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        private bool IsPathExisted()
+        {
+            return File.Exists(path);
+        }
+
+        private string GetFullPath(string fileName)
+        {
+            return string.Format($"{path}\\{fileName}{extension}");
+        }
+
+        public void Write(string fileName, Object obj)
+        {
+            if (!IsPathExisted()) //if path doesn't exist
+            {
+                CreateFolder(); //create path
+            }
+
+            string fullPath = GetFullPath(fileName);
+
+            //string Path = "WPF-Image-Gallery\\WPF-Image-Gallery\\bin\\Debug\\data\\" + fileName + extension;
+            //MessageBox.Show(Path);
+            StreamWriter streamWriter = new StreamWriter(fullPath);
+            string content = JsonConvert.SerializeObject(obj);
+            streamWriter.Write(content);
+            streamWriter.Close();
+            MessageBox.Show($"write to {fileName}");
+        }
+
+        public T Read<T>(string fileName)
+        {
+            string fullPath = GetFullPath(fileName);
+            if (!File.Exists(fullPath))
+            {
+                //MessageBox.Show("doesn't exist");
+                return default(T);            
+            }
+
+            //string content = File.ReadAllText(fullPath);
+
+            StreamReader streamReader = new StreamReader(fullPath);
+            string content = streamReader.ReadToEnd();
+            streamReader.Close();
+
+            return JsonConvert.DeserializeObject<T>(content);
         }
     }
 }
