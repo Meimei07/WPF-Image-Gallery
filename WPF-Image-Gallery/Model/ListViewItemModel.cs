@@ -10,6 +10,7 @@ namespace WPF_Image_Gallery.Model
     {
         public string Icon { get; set; }
         public string Name { get; set; }
+        public string Source { get; set; }
         public string Extension { get; set; }
         public double Size { get; set; }
         public string CreateDate { get; set; }

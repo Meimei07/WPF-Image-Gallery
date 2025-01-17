@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Title="This PC" Height="450" Width="800">
-
+    
     <Window.Resources>
         <!--list view template-->
         <DataTemplate x:Key="IconTemplate">
@@ -41,6 +41,20 @@
             </Border>
         </DataTemplate>
 
+        <!--remove all default styles of buttons-->
+        <!--<Style TargetType="Button">
+            --><!-- Disable default style --><!--
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                              VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+        
         <!--<DataTemplate x:Key="DetailsTemplate">
 
             <Grid>
@@ -150,11 +164,18 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
                     
                     <ColumnDefinition/> <!--detail button-->
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="3"
+                <Button Grid.Column="0" Name="btnCut" Click="btnCut_Click" Content="Cut" FontSize="20"/>
+                <Button Grid.Column="1" Name="btnCopy" Click="btnCopy_Click" Content="Copy" FontSize="20"/>
+                <Button Grid.Column="2" Name="btnPaste" Click="btnPaste_Click" Content="Paste" FontSize="20"/>
+                <Button Grid.Column="3" Name="btnDelete" Click="btnDelete_Click" Content="Delete" FontSize="20"/>
+
+                <Button Grid.Column="5"
                     Name="btnDetail"
                     Click="btnDetail_Click"
                         

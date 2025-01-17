@@ -7,7 +7,23 @@
         mc:Ignorable="d"
         WindowState="Maximized"
         Title="Gallery" Height="450" Width="800">
-    
+
+    <!--remove all default styles of buttons-->
+    <Window.Resources>
+        <Style TargetType="Button">
+            <!-- Disable default style -->
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

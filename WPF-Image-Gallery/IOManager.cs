@@ -101,6 +101,8 @@ namespace WPF_Image_Gallery
             string content = JsonConvert.SerializeObject(obj);
             streamWriter.Write(content);
             streamWriter.Close();
+
+            MessageBox.Show("write");
         }
 
         public T Read<T>(string fileName)

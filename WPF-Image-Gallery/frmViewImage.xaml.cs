@@ -24,13 +24,15 @@ namespace WPF_Image_Gallery
         private double zoomFactor = 1.0;
         private string fullPath;
         private string tbPath;
+        private string name;
         private IOManager ioManager = new IOManager();
 
-        public frmViewImage(string fullPath, string tbPath)
+        public frmViewImage(string name, string fullPath, string tbPath)
         {
             InitializeComponent();
             this.fullPath = fullPath;
             this.tbPath = tbPath;
+            this.name = name;
 
             try
             {
@@ -100,25 +102,21 @@ namespace WPF_Image_Gallery
         {
             string rootPath = Path.GetDirectoryName(fullPath);
 
-            //if(rootPath != tbPath)
-            //{
-            //    rootPath = tbPath;
-            //}
-
             //string fileName = Path.GetFileName(fullPath); //name with extension
-            string fileName = Path.GetFileNameWithoutExtension(fullPath);
+            //string fileName = Path.GetFileNameWithoutExtension(fullPath);
 
             //List<string> files = ioManager.GetFilesInString(rootPath);
             var files = ioManager.Read<List<ListViewItemModel>>(System.IO.Path.GetFileName(tbPath));
 
             if(files==null) { return; }
-            int fileIndex = files.FindIndex(f => f.Name == fileName);
+            int fileIndex = files.FindIndex(f => f.Name == name);
 
             if(fileIndex > 0)
             {
                 //can previous
                 fileIndex -= 1;
-                fullPath = Path.Combine(files[fileIndex].FullPath, files[fileIndex].Name + files[fileIndex].Extension);
+                fullPath = Path.Combine(files[fileIndex].FullPath, files[fileIndex].Source + files[fileIndex].Extension);
+                name = files[fileIndex].Name;
                 img.Source = new BitmapImage(new Uri(fullPath));
             }
         }
@@ -127,25 +125,19 @@ namespace WPF_Image_Gallery
         {
             string rootPath = Path.GetDirectoryName(fullPath);
 
-            //if (rootPath != tbPath)
-            //{
-            //    rootPath = tbPath;
-            //}
+            //string fileName = Path.GetFileNameWithoutExtension(fullPath);
 
-            string fileName = Path.GetFileNameWithoutExtension(fullPath);
-
-            //List<string> files = ioManager.GetFilesInString(tbPath);
-            var files = ioManager.Read<List<ListViewItemModel>>(System.IO.Path.GetFileName(tbPath));
-            //MessageBox.Show(files.Count.ToString());
+            List<ListViewItemModel> files = ioManager.Read<List<ListViewItemModel>>(System.IO.Path.GetFileName(tbPath));
 
             if(files == null) { return; }
-            int fileIndex = files.FindIndex(f => f.Name == fileName);
+            int fileIndex = files.FindIndex(f => f.Name == name);
 
             if (fileIndex < files.Count - 1)
             {
                 //can next
                 fileIndex += 1;
-                fullPath = Path.Combine(files[fileIndex].FullPath, files[fileIndex].Name + files[fileIndex].Extension);
+                fullPath = Path.Combine(files[fileIndex].FullPath, files[fileIndex].Source + files[fileIndex].Extension);
+                name = files[fileIndex].Name;
                 img.Source = new BitmapImage(new Uri(fullPath));
             }
         }
