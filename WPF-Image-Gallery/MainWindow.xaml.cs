@@ -286,7 +286,6 @@ namespace WPF_Image_Gallery
             {
                 borderDetails.Visibility = Visibility.Collapsed;
                 ((ColumnDefinition)gridRow2.ColumnDefinitions[4]).Width = new GridLength(0);
-
             }
         }
 
@@ -392,6 +391,53 @@ namespace WPF_Image_Gallery
             else if(listView.SelectedItem == null)
             {
                 return;
+            }
+        }
+
+        private void btnFormat_Click(object sender, RoutedEventArgs e)
+        {
+            if(string.IsNullOrEmpty(cmbFormatType.Text) || listView.SelectedItem == null)
+            {
+                return;
+            }
+
+            if(listView.SelectedItem is ListViewItemModel item)
+            {
+                string selectedFormatType = cmbFormatType.Text;
+                string path = System.IO.Path.Combine(item.FullPath, item.Source + item.Extension); //original path
+                string outputPath = System.IO.Path.Combine(item.FullPath, item.Source + "." + selectedFormatType.ToLower()); //after format path
+                //MessageBox.Show(path);
+
+                BitmapImage bitmap = new BitmapImage(new Uri(path, UriKind.Absolute));
+                BitmapEncoder encoder;
+
+                switch(selectedFormatType)
+                {
+                    case "PNG": encoder = new PngBitmapEncoder(); break;
+                    case "GIF": encoder = new GifBitmapEncoder(); break;
+                    case "JPEG": encoder = new JpegBitmapEncoder(); break;
+                    case "TIFF": encoder = new TiffBitmapEncoder(); break;
+                    case "BMP": encoder = new BmpBitmapEncoder(); break;
+                    case "WMP": encoder = new WmpBitmapEncoder(); break;
+                    default: throw new ArgumentException("Unsupported format");
+                }
+
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+
+                using (var fileStream = new FileStream(outputPath, FileMode.Create))
+                {
+                    encoder.Save(fileStream); //save to computer
+                }
+
+                FileInfo file = new FileInfo(outputPath);
+                double size = Math.Ceiling(file.Length / 1024.0);
+
+                DateTime createDate = file.CreationTime;
+                string date = createDate.Date.ToShortDateString();
+                string time = createDate.ToString("HH:mm");
+
+                ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = item.Name, Source = item.Name, Extension = "." + selectedFormatType.ToLower(), Size = size, CreateDate = date, CreateTime = time, FullPath = item.FullPath });
+                ioManager.Write(System.IO.Path.GetFileName(tbPath.Text), ListViewItemModels);
             }
         }
     }

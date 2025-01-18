@@ -105,11 +105,13 @@ namespace WPF_Image_Gallery
             //string fileName = Path.GetFileName(fullPath); //name with extension
             //string fileName = Path.GetFileNameWithoutExtension(fullPath);
 
+            string extension = System.IO.Path.GetExtension(fullPath);
+
             //List<string> files = ioManager.GetFilesInString(rootPath);
             var files = ioManager.Read<List<ListViewItemModel>>(System.IO.Path.GetFileName(tbPath));
 
             if(files==null) { return; }
-            int fileIndex = files.FindIndex(f => f.Name == name);
+            int fileIndex = files.FindIndex(f => f.Name == name && f.Extension == extension);
 
             if(fileIndex > 0)
             {
@@ -129,8 +131,10 @@ namespace WPF_Image_Gallery
 
             List<ListViewItemModel> files = ioManager.Read<List<ListViewItemModel>>(System.IO.Path.GetFileName(tbPath));
 
+            string extension = System.IO.Path.GetExtension(fullPath);
+
             if(files == null) { return; }
-            int fileIndex = files.FindIndex(f => f.Name == name);
+            int fileIndex = files.FindIndex(f => f.Name == name && f.Extension == extension);
 
             if (fileIndex < files.Count - 1)
             {

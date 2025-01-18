@@ -161,21 +161,42 @@
         <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0.2">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.3*"/> <!--cut button-->
+                    <ColumnDefinition Width="0.3*"/> <!--copy button-->
+                    <ColumnDefinition Width="0.3*"/> <!--paste button-->
+                    <ColumnDefinition Width="0.3*"/> <!--delete button-->
+                    <ColumnDefinition Width="0.5*"/> <!--format button-->
+                    <ColumnDefinition Width="0.5*"/> <!--format button-->
+                    <ColumnDefinition Width="0.5*"/> <!--format button-->
                     
                     <ColumnDefinition/> <!--detail button-->
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Name="btnCut" Click="btnCut_Click" Content="Cut" FontSize="20"/>
-                <Button Grid.Column="1" Name="btnCopy" Click="btnCopy_Click" Content="Copy" FontSize="20"/>
-                <Button Grid.Column="2" Name="btnPaste" Click="btnPaste_Click" Content="Paste" FontSize="20"/>
-                <Button Grid.Column="3" Name="btnDelete" Click="btnDelete_Click" Content="Delete" FontSize="20"/>
+                <Button Grid.Column="0" Name="btnCut" Click="btnCut_Click">
+                    <Image Source="/Images/cut.png"/>
+                </Button>
+                <Button Grid.Column="1" Name="btnCopy" Click="btnCopy_Click">
+                    <Image Source="/Images/copy.png"/>
+                </Button>
+                <Button Grid.Column="2" Name="btnPaste" Click="btnPaste_Click">
+                    <Image Source="/Images/paste.png"/>
+                </Button>
+                <Button Grid.Column="3" Name="btnDelete" Click="btnDelete_Click">
+                    <Image Source="/Images/trash.png"/>
+                </Button>
 
-                <Button Grid.Column="5"
+                <ComboBox Grid.Column="5" Name="cmbFormatType">
+                    <ComboBoxItem Content="PNG"/>
+                    <ComboBoxItem Content="GIF"/>
+                    <ComboBoxItem Content="JPEG"/>
+                    <ComboBoxItem Content="TIFF"/>
+                    <ComboBoxItem Content="BMP"/>
+                    <ComboBoxItem Content="WMP"/>
+                </ComboBox>
+                
+                <Button Grid.Column="6" Name="btnFormat" Click="btnFormat_Click" Content="Format" FontSize="20"/>
+
+                <Button Grid.Column="7"
                     Name="btnDetail"
                     Click="btnDetail_Click"
                         
