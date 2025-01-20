@@ -27,8 +27,8 @@ A WPF-based image viewer application that allows users to browse, organize, and 
 
 Image gallery interface
 
-![Image gallery](Assets\image-gallery.png)
+![Image gallery](Assets/image-gallery.png)
 
 Full screen mode
 
-![Full Screen Mode](Assets\full-screen-mode.png)
+![Full Screen Mode](Assets/full-screen-mode.png)
