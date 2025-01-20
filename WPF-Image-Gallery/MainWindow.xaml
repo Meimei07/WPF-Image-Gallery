@@ -7,7 +7,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
+        
         Title="This PC" Height="450" Width="800">
     
     <Window.Resources>
@@ -17,10 +17,10 @@
 
                 <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="250"/>
-                        <ColumnDefinition MinWidth="60"/>
-                        <ColumnDefinition MinWidth="70"/>
-                        <ColumnDefinition MinWidth="150"/>
+                        <ColumnDefinition MinWidth="250"/> <!--icon, name-->
+                        <ColumnDefinition MinWidth="60"/> <!--extension-->
+                        <ColumnDefinition MinWidth="70"/> <!--size-->
+                        <ColumnDefinition MinWidth="150"/> <!--date, time-->
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,10,0">
@@ -41,20 +41,41 @@
             </Border>
         </DataTemplate>
 
-        <!--remove all default styles of buttons-->
-        <!--<Style TargetType="Button">
-            --><!-- Disable default style --><!--
+        <!--for all buttons-->
+        <Style TargetType="Button">
+            <!-- Disable default style -->
             <Setter Property="OverridesDefaultStyle" Value="True"/>
+
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <ContentPresenter HorizontalAlignment="Center" 
-                              VerticalAlignment="Center"/>
+                        <Border x:Name="BackgroundBorder" Background="Transparent" BorderBrush="Transparent" BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <!-- when MouseOver, change background color -->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BackgroundBorder" Property="Background" Value="#f7e4ef"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>-->
-        
+        </Style>
+
+        <!--for specific stackpanel-->
+        <Style x:Key="hoverStackPanel" TargetType="StackPanel">
+            <Setter Property="Background" Value="Transparent"/>
+
+            <Style.Triggers>
+                <!-- when MouseOver, change background color -->
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#f7e4ef"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <!--<DataTemplate x:Key="DetailsTemplate">
 
             <Grid>
@@ -107,34 +128,32 @@
         </Grid.RowDefinitions>
 
         <!--row0 path, search-->
-        <Grid Grid.Row="0" Background="WhiteSmoke" Grid.ColumnSpan="2">
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="WhiteSmoke">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition/> <!--path-->
+                <ColumnDefinition/> <!--search-->
             </Grid.ColumnDefinitions>
 
             <!--column0 path-->
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5,5,0,5">
-                <TextBlock Text="Path : " FontSize="17"/>
-                <TextBox Grid.Column="0"
+                <Image Source="/Images/my computer.png" Margin="0,0,8,0" Width="25"/>
+                <TextBox
                     Name="tbPath" 
                     IsReadOnly="True"
                     Text="{Binding FullPath}" 
          
                     Width="340"
-                    FontSize="15"
+                    FontSize="13"
+                    FontFamily="Comic Sans MS"
+                    Padding="0,4,0,0"
                 />
             </StackPanel>
 
             <!--column1 combo box, search-->
-            <StackPanel Grid.Column="1"
-                        Orientation="Horizontal"
-                        Margin="20,0,0,0">
-
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20,0,0,0">
                 <ComboBox Name="cmbSearchType"
-                          Width="70" 
-                          Margin="0, 5"
-                          FontSize="15">
+                          Width="60" Margin="0,5"
+                          FontSize="13" FontFamily="Comic Sans MS">
                     <ComboBoxItem Content="Name"/>
                     <ComboBoxItem Content="Type"/>
                     <ComboBoxItem Content="Size"/>
@@ -152,68 +171,78 @@
                     Width="300"
                     Margin="5"
                     FontSize="16"
-                    Padding="5,0"
+                    Padding="5,1.5"
                 />
             </StackPanel>
         </Grid>
 
-        <!--row1 toolbar: delete, copy, paste, details ...-->
+        <!--row1 toolbar: insert, cut, copy, paste, delete, format, details button-->
         <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0.2">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.3*"/> <!--cut button-->
-                    <ColumnDefinition Width="0.3*"/> <!--copy button-->
-                    <ColumnDefinition Width="0.3*"/> <!--paste button-->
-                    <ColumnDefinition Width="0.3*"/> <!--delete button-->
-                    <ColumnDefinition Width="0.5*"/> <!--format button-->
-                    <ColumnDefinition Width="0.5*"/> <!--format button-->
-                    <ColumnDefinition Width="0.5*"/> <!--format button-->
+                    <ColumnDefinition Width="auto"/> <!--insert button-->
+                    <ColumnDefinition Width="auto"/> <!--cut button-->
+                    <ColumnDefinition Width="auto"/> <!--copy button-->
+                    <ColumnDefinition Width="auto"/> <!--paste button-->
+                    <ColumnDefinition Width="auto"/> <!--delete button-->
                     
-                    <ColumnDefinition/> <!--detail button-->
+                    <ColumnDefinition Width="0.5*"/> <!--format combobox, button-->
+
+                    <ColumnDefinition Width="0.35*"/> <!--detail button-->
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Name="btnCut" Click="btnCut_Click">
-                    <Image Source="/Images/cut.png"/>
+                <Button Grid.Column="0" Name="btnInsert" Click="btnInsert_Click" Cursor="Hand" Width="35" Margin="2,2,0,2">
+                    <Image Source="/Images/insert.png" Width="20"/>
                 </Button>
-                <Button Grid.Column="1" Name="btnCopy" Click="btnCopy_Click">
-                    <Image Source="/Images/copy.png"/>
+                <Button Grid.Column="1" Name="btnCut" Click="btnCut_Click" Cursor="Hand" Width="35" Margin="0,2">
+                    <Image Source="/Images/cut.png" Width="19"/>
                 </Button>
-                <Button Grid.Column="2" Name="btnPaste" Click="btnPaste_Click">
-                    <Image Source="/Images/paste.png"/>
+                <Button Grid.Column="2" Name="btnCopy" Click="btnCopy_Click" Cursor="Hand" Width="35" Margin="0,2">
+                    <Image Source="/Images/copy.png" Width="18"/>
                 </Button>
-                <Button Grid.Column="3" Name="btnDelete" Click="btnDelete_Click">
-                    <Image Source="/Images/trash.png"/>
+                <Button Grid.Column="3" Name="btnPaste" Click="btnPaste_Click" Cursor="Hand" Width="35" Margin="0,2">
+                    <Image Source="/Images/paste.png" Width="20"/>
+                </Button>
+                <Button Grid.Column="4" Name="btnDelete" Click="btnDelete_Click" Cursor="Hand" Width="35" Margin="0,2">
+                    <Image Source="/Images/trash.png" Width="21"/>
                 </Button>
 
-                <ComboBox Grid.Column="5" Name="cmbFormatType">
-                    <ComboBoxItem Content="PNG"/>
-                    <ComboBoxItem Content="GIF"/>
-                    <ComboBoxItem Content="JPEG"/>
-                    <ComboBoxItem Content="TIFF"/>
-                    <ComboBoxItem Content="BMP"/>
-                    <ComboBoxItem Content="WMP"/>
-                </ComboBox>
-                
-                <Button Grid.Column="6" Name="btnFormat" Click="btnFormat_Click" Content="Format" FontSize="20"/>
+                <!--format-->
+                <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <ComboBox Name="cmbFormatType" 
+                              Width="60" Margin="0,3,10,3" 
+                              FontFamily="Comic Sans MS">
+                        <ComboBoxItem Content="PNG"/>
+                        <ComboBoxItem Content="GIF"/>
+                        <ComboBoxItem Content="JPEG"/>
+                        <ComboBoxItem Content="TIFF"/>
+                        <ComboBoxItem Content="BMP"/>
+                        <ComboBoxItem Content="WMP"/>
+                    </ComboBox>
 
-                <Button Grid.Column="7"
-                    Name="btnDetail"
-                    Click="btnDetail_Click"
-                        
-                    Content="Details"
-                    Background="White"
-                    FontSize="20"
-                    BorderThickness="0.3"
-                    BorderBrush="Gray"
-                    Padding="0,0,0,5"
-                />
+                    <Button Name="btnFormat" Click="btnFormat_Click" Cursor="Hand" Foreground="Gray" Margin="0,2" Width="80" Content="Format" FontSize="18" FontFamily="Comic Sans MS"/>
+                </StackPanel>
+
+                <!--details-->
+                <StackPanel Grid.Column="6" 
+                            Name="details" 
+                            MouseDown="details_MouseDown" 
+                            Style="{StaticResource hoverStackPanel}"
+                            Margin="0,0,10,0"
+                            Cursor="Hand"
+                            Orientation="Horizontal" 
+                            VerticalAlignment="Center" HorizontalAlignment="Right">
+
+                    <Image Source="/Images/detail.png" Width="25" Margin="10,3,5,5"/>
+                    <TextBlock Text="Details" Foreground="Gray" FontSize="18" FontFamily="Comic Sans MS" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                </StackPanel>
             </Grid>
         </Border>
         
-        <!--row2-->
-        <Grid Name="gridRow2" Grid.Row="2" Grid.ColumnSpan="2">
+        <!--row2 treeview, listview, details block-->
+        <Grid Grid.Row="2" Grid.ColumnSpan="2"  Name="gridRow2"> 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/> <!--tree view-->
+                <ColumnDefinition Width="150" MaxWidth="250" MinWidth="150"/> <!--tree view-->
                 <ColumnDefinition Width="2"/> <!--spliter-->
                 <ColumnDefinition Width="*"/> <!--list view-->
                 <ColumnDefinition Width="2"/> <!--spliter-->
@@ -221,14 +250,18 @@
             </Grid.ColumnDefinitions>
 
             <!--column0 tree view-->
-            <TreeView Name="treeView" FontSize="13" Padding="5,7,5,5" ItemsSource="{Binding itemModels}">
+            <TreeView Name="treeView" 
+                      ItemsSource="{Binding itemModels}"
+                      FontSize="13" 
+                      Padding="0,3,0,0" 
+                      Cursor="Hand">
                 <!--show tree view template-->
                 <TreeView.ItemTemplate>
 
                     <!--show tree hierarchical, will apply the same style to all level hierarchy (parent/children)-->
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
 
-                        <StackPanel MouseLeftButtonDown="StackPanel_MouseLeftButtonDown" Orientation="Horizontal">
+                        <StackPanel MouseLeftButtonDown="StackPanel_MouseLeftButtonDown" Orientation="Horizontal" Margin="0,2,0,2">
                             <Image Source="{Binding Icon}" Width="20" Height="20"/>
                             <TextBlock Text="{Binding Name}" Margin="5,0,0,0"/>
                         </StackPanel>
@@ -239,13 +272,13 @@
             </TreeView>
 
             <!--column1 spliter-->
-            <GridSplitter Grid.Column="1" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <GridSplitter Grid.Column="1" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
             <!--column2 header & list view-->
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition/>
+                    <RowDefinition Height="25"/> <!--header-->
+                    <RowDefinition/> <!--list view-->
                 </Grid.RowDefinitions>
 
                 <!--row0 header-->
@@ -263,27 +296,28 @@
                     <TextBlock Grid.Column="3" Text="Create Date" HorizontalAlignment="Left"/>
                 </Grid>
 
-                <!--row1 list view content-->
-                <ListView Grid.Row="1" 
+                <!--row1 list view-->
+                <ListView Grid.Row="1"
                     Name="listView"
                     AllowDrop="True"
                     Drop="listView_Drop"
+                    SelectionMode="Extended"
                     ItemsSource="{Binding ListViewItemModels}" 
                     ItemTemplate="{StaticResource IconTemplate}" 
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    Margin="0,5,0,0"
+                    Padding="0,5,0,0"
                 />
 
             </Grid>
 
             <!--column3 spliter-->
-            <GridSplitter Grid.Column="3" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <GridSplitter Grid.Column="3" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
             <!--column4 details-->
             <Border Grid.Column="4" 
                     Name="borderDetails" 
-                    BorderBrush="Gray" BorderThickness="0.2" 
+                    BorderBrush="Gray" BorderThickness="0.5" 
                     Visibility="Collapsed" 
                     Panel.ZIndex="100">
                 
@@ -298,40 +332,40 @@
 
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <Image Source="/Images/image.png" Width="15" Height="15" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Row="1" Text="{Binding Name}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontFamily="Comic Sans MS"/>
                     </StackPanel>
                     
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="55"/>
+                            <ColumnDefinition Width="60"/>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
+                            <RowDefinition/> <!--detail-->
+                            <RowDefinition/> <!--type-->
+                            <RowDefinition/> <!--size-->
+                            <RowDefinition/> <!--file location-->
+                            <RowDefinition/> <!--date-->
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Details" FontSize="14" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Details" FontSize="14" HorizontalAlignment="Left" FontFamily="Comic Sans MS"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Type" HorizontalAlignment="Left" FontSize="10"/>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Extension}" HorizontalAlignment="Right" FontSize="10"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Type" HorizontalAlignment="Left" FontSize="10" FontFamily="Comic Sans MS"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Extension}" HorizontalAlignment="Right" FontSize="10" FontFamily="Comic Sans MS"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Size" HorizontalAlignment="Left" FontSize="10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Size" HorizontalAlignment="Left" FontSize="10" FontFamily="Comic Sans MS"/>
                         <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal"  HorizontalAlignment="Right">
-                            <TextBlock Text="{Binding Size}" FontSize="10"/>
-                            <TextBlock Text=" KB" FontSize="10"/>
+                            <TextBlock Text="{Binding Size}" FontSize="10" FontFamily="Comic Sans MS"/>
+                            <TextBlock Text=" KB" FontSize="10" FontFamily="Comic Sans MS"/>
                         </StackPanel>
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="File location" HorizontalAlignment="Left" FontSize="10"/>
-                        <TextBlock Name="tbFullPath" Grid.Row="3" Grid.Column="2" Text="{Binding FullPath}" HorizontalAlignment="Right" FontSize="10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="File location" HorizontalAlignment="Left" FontSize="10" FontFamily="Comic Sans MS"/>
+                        <TextBlock Name="tbFullPath" Grid.Row="3" Grid.Column="2" Text="{Binding FullPath}" HorizontalAlignment="Right" FontSize="10" FontFamily="Comic Sans MS"/>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Create Date" HorizontalAlignment="Left" FontSize="10"/>
-                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding CreateDate}" HorizontalAlignment="Right" FontSize="10"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Create Date" HorizontalAlignment="Left" FontSize="10" FontFamily="Comic Sans MS"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding CreateDate}" HorizontalAlignment="Right" FontSize="10" FontFamily="Comic Sans MS"/>
                     </Grid>
                 </Grid>
             </Border>

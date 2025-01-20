@@ -8,8 +8,8 @@
         WindowState="Maximized"
         Title="Gallery" Height="450" Width="800">
 
-    <!--remove all default styles of buttons-->
     <Window.Resources>
+        <!--remove all default styles of buttons-->
         <Style TargetType="Button">
             <!-- Disable default style -->
             <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -26,8 +26,8 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="50"/>
+            <RowDefinition/> <!--image-->
+            <RowDefinition Height="50"/> <!--butons-->
         </Grid.RowDefinitions>
         
         <!--row0 image-->
@@ -37,44 +37,36 @@
             </Image.RenderTransform>
         </Image>
 
-        <!--row1 button-->
-        <Border Grid.Row="1"
-                CornerRadius="25"
-                Background="MistyRose"
-                Width="300"    
-                Height="45">
+        <!--row1 buttons-->
+        <Border Grid.Row="1">
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition/> <!--zoom in/out-->
+                    <ColumnDefinition/> <!--previous/next-->
                 </Grid.ColumnDefinitions>
 
                 <!--column0 zoom in/out-->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Name="btnZoomIn" Click="btnZoomIn_Click"
-                            BorderThickness="0" Background="MistyRose" Margin="0,0,15,0">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0">
+                    <Button Name="btnZoomIn" Click="btnZoomIn_Click" Cursor="Hand" Margin="0,0,15,0">
                         <Image Source="/Images/zoom in.png" Height="25"/>
                     </Button>
-                    <Button Name="btnZoomOut" Click="btnZoomOut_Click"
-                            BorderThickness="0" Background="MistyRose">
+                    <Button Name="btnZoomOut" Click="btnZoomOut_Click" Cursor="Hand">
                         <Image Source="/Images/zoom out.png" Height="25"/>
                     </Button>
                 </StackPanel>
                 
                 <!--column1 previous/next-->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Button Name="btnPrevious" Click="btnPrevious_Click"
-                            BorderThickness="0" Background="MistyRose">
-                        <Image Margin="0,0,10,0" Source="/Images/preivous.png"/>
+                <StackPanel Grid.Column="1" Cursor="Hand" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button Name="btnPrevious" Click="btnPrevious_Click">
+                        <Image Margin="0,0,10,0" Source="/Images/previous.png" Width="35"/>
                     </Button>
-                    <Button Name="btnNext" Click="btnNext_Click"
-                            BorderThickness="0" Background="MistyRose">
-                        <Image Margin="10,0,0,0" Source="/Images/next.png"/>
+                    <Button Name="btnNext" Click="btnNext_Click" Cursor="Hand">
+                        <Image Margin="10,0,0,0" Source="/Images/next.png" Width="35"/>
                     </Button>
                 </StackPanel>
-                
             </Grid>
+            
         </Border>
     </Grid>
 </Window>

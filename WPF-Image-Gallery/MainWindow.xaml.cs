@@ -18,6 +18,9 @@ using System.IO;
 using System.Collections.ObjectModel;
 using WPF_Image_Gallery.Model;
 using static System.Net.WebRequestMethods;
+using Microsoft.Win32;
+//using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace WPF_Image_Gallery
 {
@@ -30,7 +33,10 @@ namespace WPF_Image_Gallery
         public List<string> folderNames = new List<string>();
         private string rootPath = "pack://application:,,,/Images/";
 
+        //for tree view
         public ObservableCollection<TreeViewItemModel> itemModels = new ObservableCollection<TreeViewItemModel>();
+        
+        //for list view
         public ObservableCollection<ListViewItemModel> ListViewItemModels { get; set; }
 
         public MainWindow()
@@ -74,16 +80,16 @@ namespace WPF_Image_Gallery
                 subItemModel.Icon = rootPath + "folder (2).png";
                 subItemModel.Name = subFolderName;
 
-                item.Children.Add(subItemModel);               
+                item.Children.Add(subItemModel);
 
-                string path = System.IO.Path.Combine(mainFolderName, subFolderName);
+                string path = combinePath(mainFolderName, subFolderName);
                 recursiveRetrievingFolder(path, subItemModel);
             }
         }
       
         private void retrieveFolders() //retrieve starts from drive of computer
         {
-            string[] drives = Environment.GetLogicalDrives();
+            string[] drives = Environment.GetLogicalDrives(); //get computer's local drives
             foreach (string drive in drives)
             {
                 TreeViewItemModel treeViewItemModel = new TreeViewItemModel();
@@ -144,19 +150,20 @@ namespace WPF_Image_Gallery
                             }
                             else
                             {
-                                fullPath = System.IO.Path.Combine(parentItem.Name, fullPath);
+                                //fullPath = System.IO.Path.Combine(parentItem.Name, fullPath);
+                                fullPath = combinePath(parentItem.Name, fullPath);
                             }
                         }
 
                         parent = VisualTreeHelper.GetParent(parent);
                     }
 
-                    string folderName = System.IO.Path.GetFileName(fullPath); //last folder name
+                    string folderName = getFileName(fullPath);
 
                     //read from file first
                     List<ListViewItemModel> files = ioManager.Read<List<ListViewItemModel>>(folderName);
 
-                    if (files == null) //if files doesn't exist, 
+                    if (files == null) //if files (folderName) doesn't exist, 
                     {
                         List<ListViewData> filesData = ioManager.GetFiles(fullPath); //get files from computer directly
                         foreach (ListViewData file in filesData)
@@ -167,7 +174,6 @@ namespace WPF_Image_Gallery
                     }
                     else //if file exist, read from file
                     {
-                        //files = files.OrderByDescending(f => f.Name).Reverse().ToList();
                         foreach (ListViewItemModel file in files)
                         {
                             ListViewItemModels.Add(file);
@@ -191,7 +197,7 @@ namespace WPF_Image_Gallery
             {
                 if (sender is Grid grid && grid.DataContext is ListViewItemModel item)
                 {
-                    string fullPath = System.IO.Path.Combine(item.FullPath, item.Source + item.Extension);
+                    string fullPath = combinePath(item.FullPath, item.Source + item.Extension);
                     frmViewImage frmViewImage = new frmViewImage(item.Name, fullPath, tbPath.Text);
                     frmViewImage.ShowDialog();
                 }
@@ -200,7 +206,7 @@ namespace WPF_Image_Gallery
             {
                 if (sender is Grid grid && grid.DataContext is ListViewItemModel item)
                 {
-                    string root = System.IO.Path.Combine(rootPath, item.FullPath, item.Source + item.Extension);
+                    string root = combinePath(item.FullPath, item.Source + item.Extension);
                     photo.Source = new BitmapImage(new Uri(root));
                     tbFullPath.Text = tbPath.Text;
                     gridDetails.DataContext = item;
@@ -216,11 +222,8 @@ namespace WPF_Image_Gallery
             }
 
             string selectedSearchType = cmbSearchType.Text;
-            string path = System.IO.Path.GetFileName(tbPath.Text); //last folder name 
-            string searchWord = tbSearch.Text.ToLower();
-
-            //List<ListViewData> allFiles = ioManager.GetFiles(path); //get all files name from that folder
-            //List<ListViewData> filterFiles = new List<ListViewData>();
+            string path = getFileName(tbPath.Text);
+            string searchWord = tbSearch.Text;
 
             List<ListViewItemModel> allFiles = ioManager.Read<List<ListViewItemModel>>(path);
             List<ListViewItemModel> filterFiles = new List<ListViewItemModel>();
@@ -229,22 +232,22 @@ namespace WPF_Image_Gallery
             {
                 if (selectedSearchType == "Name")
                 {
-                    filterFiles = allFiles.Where(f => f.Name.ToLower().Contains(searchWord)).ToList();
+                    filterFiles = allFiles.Where(f => f.Name.ToLower().Contains(searchWord.ToLower())).ToList();
                     updateListView(filterFiles, path);
                 }
                 else if (selectedSearchType == "Type")
                 {
-                    filterFiles = allFiles.Where(f => f.Extension.ToLower().Contains(searchWord)).ToList();
+                    filterFiles = allFiles.Where(f => f.Extension.ToLower().Contains(searchWord.ToLower())).ToList();
                     updateListView(filterFiles, path);
                 }
                 else if (selectedSearchType == "Size")
                 {
-                    filterFiles = allFiles.Where(f => f.Size.ToString().Contains(searchWord)).ToList();
+                    filterFiles = allFiles.Where(f => f.Size.ToString().Contains(searchWord.ToLower())).ToList();
                     updateListView(filterFiles, path);
                 }
                 else if (selectedSearchType == "Create Date")
                 {
-                    filterFiles = allFiles.Where(f => f.CreateDate.Contains(searchWord)).ToList();
+                    filterFiles = allFiles.Where(f => f.CreateDate.Contains(searchWord.ToLower())).ToList();
                     updateListView(filterFiles, path);
                 }
             }
@@ -257,35 +260,6 @@ namespace WPF_Image_Gallery
             foreach (var file in filterFiles)
             {
                 ListViewItemModels.Add(file);
-                //ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = getName(file), Extension = file.Extension, Size = file.Size, CreateDate = file.CreateDate, CreateTime = file.CreateTime, FullPath = path });
-            }
-        }
-
-        private void btnDetail_Click(object sender, RoutedEventArgs e)
-        {
-            if(borderDetails.Visibility == Visibility.Collapsed)
-            {
-                borderDetails.Visibility = Visibility.Visible;
-                ((ColumnDefinition)gridRow2.ColumnDefinitions[4]).Width = new GridLength(0.35, GridUnitType.Star); 
-
-                if(listView.SelectedItem is ListViewItemModel item)
-                {
-                    borderDetails.DataContext = item;
-                }
-                else if(listView.SelectedItem == null)
-                {
-                    borderDetails.DataContext = new ListViewItemModel
-                    {
-                        Icon = rootPath + "folder.png",
-                        FullPath = tbPath.Text,
-                        Name = tbPath.Text
-                    };
-                }
-            }
-            else
-            {
-                borderDetails.Visibility = Visibility.Collapsed;
-                ((ColumnDefinition)gridRow2.ColumnDefinitions[4]).Width = new GridLength(0);
             }
         }
 
@@ -293,7 +267,7 @@ namespace WPF_Image_Gallery
         {
             if(e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop); //get drop file(s) path
                 string[] fileExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp", ".svg" };
 
                 for (int i=0; i<files.Length; i++)
@@ -310,26 +284,34 @@ namespace WPF_Image_Gallery
 
                     if(!fileExtensions.Contains(extension)) { return; } //if it's not image file, can't drop
 
-                    ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = fileName, Source = fileName,
-                                                                    Extension = extension, Size = size, 
-                                                                    CreateDate = date, CreateTime = time, 
-                                                                    FullPath = fullPath });
+                    ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", 
+                                                                   Name = fileName, Source = fileName,
+                                                                   Extension = extension, Size = size, 
+                                                                   CreateDate = date, CreateTime = time, 
+                                                                   FullPath = fullPath });
                 }
 
-                string folderName = System.IO.Path.GetFileName(tbPath.Text);
-                ioManager.Write(folderName, ListViewItemModels);
+                ioManager.Write(getFileName(tbPath.Text), ListViewItemModels);
             }
         }
 
-        private string copiedImagePath;
+        private List<string> copiedImagePaths;
 
         private void btnCopy_Click(object sender, RoutedEventArgs e)
         {
-            if(listView.SelectedItem is ListViewItemModel item)
+            if(listView.SelectedItems.Count > 0)
             {
-                copiedImagePath = System.IO.Path.Combine(item.FullPath, item.Source + item.Extension);
+                copiedImagePaths = new List<string>();
+                foreach(var selectedItem in listView.SelectedItems)
+                {
+                    if(selectedItem is ListViewItemModel item)
+                    {
+                        string imagePath = combinePath(item.FullPath, item.Source + item.Extension);
+                        copiedImagePaths.Add(imagePath);
+                    }
+                }
             }
-            else if(listView.SelectedItem == null)
+            else
             {
                 return;
             }
@@ -337,10 +319,17 @@ namespace WPF_Image_Gallery
 
         private void btnPaste_Click(object sender, RoutedEventArgs e)
         {
-            if(copiedImagePath != null)
+            if(copiedImagePaths == null)
             {
-                string name = System.IO.Path.GetFileNameWithoutExtension(copiedImagePath);
-                FileInfo file = new FileInfo(copiedImagePath);
+                return;
+            }
+
+            List<ListViewItemModel> itemList = ioManager.Read<List<ListViewItemModel>>(getFileName(tbPath.Text));
+
+            foreach (string imagePath in copiedImagePaths)
+            {
+                FileInfo file = new FileInfo(imagePath);
+                string name = System.IO.Path.GetFileNameWithoutExtension(imagePath);
                 double size = Math.Ceiling(file.Length / 1024.0);
                 string fullPath = file.DirectoryName;
 
@@ -348,33 +337,63 @@ namespace WPF_Image_Gallery
                 string date = createDate.Date.ToShortDateString();
                 string time = createDate.ToString("HH:mm");
 
-                List<ListViewItemModel> itemList = ioManager.Read<List<ListViewItemModel>>(System.IO.Path.GetFileName(tbPath.Text));
-
                 ListViewItemModel item = itemList.Where(i => i.Name == name).FirstOrDefault();
 
-                if(item == null)
+                if (item == null) //if that file name doesn't exist, just add it
                 {
-                    ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = name, Source = name, Extension = file.Extension, Size = size, CreateDate = date, CreateTime = time, FullPath = fullPath });
+                    ListViewItemModels.Add(new ListViewItemModel
+                    {
+                        Icon = rootPath + "image.png",
+                        Name = name,
+                        Source = name,
+                        Extension = file.Extension,
+                        Size = size,
+                        CreateDate = date,
+                        CreateTime = time,
+                        FullPath = fullPath
+                    });
                 }
-                else
+                else //if that file name already exist, name it [name+Copy], to show it's a copy one
                 {
-                    ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = name + "-Copy", Source = name, Extension = file.Extension, Size = size, CreateDate = date, CreateTime = time, FullPath = fullPath });
+                    ListViewItemModels.Add(new ListViewItemModel
+                    {
+                        Icon = rootPath + "image.png",
+                        Name = name + "-Copy",
+                        Source = name,
+                        Extension = file.Extension,
+                        Size = size,
+                        CreateDate = date,
+                        CreateTime = time,
+                        FullPath = fullPath
+                    });
                 }
-
-                //itemModel.Name = itemModel.Source + "-Copy";
-                //ListViewItemModels.Add(itemModel);
-                ioManager.Write(System.IO.Path.GetFileName(tbPath.Text), ListViewItemModels);
             }
+
+            ioManager.Write(getFileName(tbPath.Text), ListViewItemModels);
+            copiedImagePaths.Clear();
         }
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
-        {
-            if(listView.SelectedItem is ListViewItemModel item)
+        {           
+            if(listView.SelectedItems.Count > 0)
             {
-                ListViewItemModels.Remove(item);
-                ioManager.Write(System.IO.Path.GetFileName(tbPath.Text), ListViewItemModels);
+                List<ListViewItemModel> removedItems = new List<ListViewItemModel>();
+
+                foreach (var selectedItem in listView.SelectedItems)
+                {
+                    if(selectedItem is ListViewItemModel item)
+                    {
+                        removedItems.Add(item);
+                    }
+                }
+
+                foreach(ListViewItemModel removedItem in removedItems)
+                {
+                    ListViewItemModels.Remove(removedItem);
+                }
+                ioManager.Write(getFileName(tbPath.Text), ListViewItemModels);
             }
-            else if(listView.SelectedItem == null)
+            else
             {
                 return;
             }
@@ -382,13 +401,29 @@ namespace WPF_Image_Gallery
 
         private void btnCut_Click(object sender, RoutedEventArgs e)
         {
-            if(listView.SelectedItem is ListViewItemModel item)
+            if(listView.SelectedItems.Count > 0)
             {
-                copiedImagePath = System.IO.Path.Combine(item.FullPath, item.Source + item.Extension);
-                ListViewItemModels.Remove(item);
-                ioManager.Write(System.IO.Path.GetFileName(tbPath.Text), ListViewItemModels);
+                copiedImagePaths = new List<string>();
+                List<ListViewItemModel> items = new List<ListViewItemModel>();
+
+                foreach (var selectedItem in listView.SelectedItems)
+                {
+                    if (selectedItem is ListViewItemModel item)
+                    {
+                        string imagePath = combinePath(item.FullPath, item.Source + item.Extension);
+                        copiedImagePaths.Add(imagePath);
+
+                        items.Add(item);
+                    }
+                }
+
+                foreach(ListViewItemModel i in items)
+                {
+                    ListViewItemModels.Remove(i);
+                }
+                ioManager.Write(getFileName(tbPath.Text), ListViewItemModels);
             }
-            else if(listView.SelectedItem == null)
+            else
             {
                 return;
             }
@@ -404,9 +439,8 @@ namespace WPF_Image_Gallery
             if(listView.SelectedItem is ListViewItemModel item)
             {
                 string selectedFormatType = cmbFormatType.Text;
-                string path = System.IO.Path.Combine(item.FullPath, item.Source + item.Extension); //original path
-                string outputPath = System.IO.Path.Combine(item.FullPath, item.Source + "." + selectedFormatType.ToLower()); //after format path
-                //MessageBox.Show(path);
+                string path = combinePath(item.FullPath, item.Source + item.Extension); //original path
+                string outputPath = combinePath(item.FullPath, item.Source + "." + selectedFormatType.ToLower()); //after format path
 
                 BitmapImage bitmap = new BitmapImage(new Uri(path, UriKind.Absolute));
                 BitmapEncoder encoder;
@@ -436,8 +470,92 @@ namespace WPF_Image_Gallery
                 string date = createDate.Date.ToShortDateString();
                 string time = createDate.ToString("HH:mm");
 
-                ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", Name = item.Name, Source = item.Name, Extension = "." + selectedFormatType.ToLower(), Size = size, CreateDate = date, CreateTime = time, FullPath = item.FullPath });
-                ioManager.Write(System.IO.Path.GetFileName(tbPath.Text), ListViewItemModels);
+                ListViewItemModels.Add(new ListViewItemModel { Icon = rootPath + "image.png", 
+                                                               Name = item.Name, Source = item.Name, 
+                                                               Extension = "." + selectedFormatType.ToLower(), Size = size, 
+                                                               CreateDate = date, CreateTime = time, 
+                                                               FullPath = item.FullPath });
+
+                ioManager.Write(getFileName(tbPath.Text), ListViewItemModels);
+            }
+        }
+
+        private string combinePath(string fullPath, string source)
+        {
+            return System.IO.Path.Combine(fullPath, source);
+        }
+
+        private string getFileName(string fullPath)
+        {
+            return System.IO.Path.GetFileName(fullPath);
+        }
+
+        private void details_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (borderDetails.Visibility == Visibility.Collapsed)
+            {
+                borderDetails.Visibility = Visibility.Visible;
+                ((ColumnDefinition)gridRow2.ColumnDefinitions[4]).Width = new GridLength(0.35, GridUnitType.Star);
+
+                if (listView.SelectedItem is ListViewItemModel item)
+                {
+                    borderDetails.DataContext = item;
+                }
+                else if (listView.SelectedItem == null)
+                {
+                    borderDetails.DataContext = new ListViewItemModel
+                    {
+                        Icon = rootPath + "folder.png",
+                        FullPath = tbPath.Text,
+                        Name = tbPath.Text
+                    };
+                }
+            }
+            else
+            {
+                borderDetails.Visibility = Visibility.Collapsed;
+                ((ColumnDefinition)gridRow2.ColumnDefinitions[4]).Width = new GridLength(0);
+            }
+        }
+
+        private void btnInsert_Click(object sender, RoutedEventArgs e)
+        {
+            string[] fileExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp", ".svg" };
+
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Multiselect = true;
+            bool? result = fileDialog.ShowDialog();
+
+            if(result == true)
+            {
+                string[] paths = fileDialog.FileNames;
+                foreach(var p in paths)
+                {
+                    FileInfo file = new FileInfo(p);
+                    string fileName = System.IO.Path.GetFileNameWithoutExtension(p);
+                    double size = Math.Ceiling(file.Length / 1024.0);
+                    string fullPath = file.DirectoryName;
+
+                    DateTime createDate = file.CreationTime;
+                    string date = createDate.Date.ToShortDateString();
+                    string time = createDate.ToString("HH:mm");
+
+                    if(!fileExtensions.Contains(file.Extension)) { return; }
+
+                    ListViewItemModels.Add(new ListViewItemModel 
+                    {
+                        Icon = rootPath + "image.png",
+                        Name = fileName,
+                        Source = fileName,
+                        Extension = file.Extension,
+                        Size = size,
+                        CreateDate = date,
+                        CreateTime = time,
+                        FullPath = fullPath
+                    });
+                }
+
+                ioManager.Write(getFileName(tbPath.Text), ListViewItemModels);
             }
         }
     }

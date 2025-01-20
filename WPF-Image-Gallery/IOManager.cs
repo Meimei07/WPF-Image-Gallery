@@ -101,8 +101,6 @@ namespace WPF_Image_Gallery
             string content = JsonConvert.SerializeObject(obj);
             streamWriter.Write(content);
             streamWriter.Close();
-
-            MessageBox.Show("write");
         }
 
         public T Read<T>(string fileName)
@@ -110,7 +108,6 @@ namespace WPF_Image_Gallery
             string fullPath = GetFullPath(fileName);
             if (!File.Exists(fullPath))
             {
-                //MessageBox.Show("doesn't exist");
                 return default(T);            
             }
 

@@ -21,7 +21,7 @@ namespace WPF_Image_Gallery
     /// </summary>
     public partial class frmViewImage : Window
     {
-        private double zoomFactor = 1.0;
+        private double zoomFactor = 1.0; //for zoom in/out
         private string fullPath;
         private string tbPath;
         private string name;
@@ -36,7 +36,7 @@ namespace WPF_Image_Gallery
 
             try
             {
-                if (File.Exists(fullPath))
+                if (File.Exists(fullPath)) //search for fullPath in computer
                 {
                     img.Source = new BitmapImage(new Uri(fullPath));
                 }
@@ -59,7 +59,6 @@ namespace WPF_Image_Gallery
             }
             else // Scroll Down -> Zoom Out
             {
-                //zoomFactor = (zoomFactor > 0.2) ? zoomFactor - 0.1 : 0.1;
                 if(zoomFactor > 0.2)
                 {
                     zoomFactor -= 0.1;
@@ -85,8 +84,8 @@ namespace WPF_Image_Gallery
         }
 
         private void btnZoomOut_Click(object sender, RoutedEventArgs e)
-        {
-            //zoomFactor = (zoomFactor > 0.2) ? zoomFactor - 0.1 : 0.1;  // Decrease zoom factor but avoid going too small
+        { 
+            //Decrease zoom factor but avoid getting too small
             if(zoomFactor > 0.2)
             {
                 zoomFactor -= 0.1;
@@ -100,17 +99,11 @@ namespace WPF_Image_Gallery
 
         private void btnPrevious_Click(object sender, RoutedEventArgs e)
         {
-            string rootPath = Path.GetDirectoryName(fullPath);
+            List<ListViewItemModel> files = ioManager.Read<List<ListViewItemModel>>(System.IO.Path.GetFileName(tbPath));
 
-            //string fileName = Path.GetFileName(fullPath); //name with extension
-            //string fileName = Path.GetFileNameWithoutExtension(fullPath);
+            if(files == null) { return; }
 
             string extension = System.IO.Path.GetExtension(fullPath);
-
-            //List<string> files = ioManager.GetFilesInString(rootPath);
-            var files = ioManager.Read<List<ListViewItemModel>>(System.IO.Path.GetFileName(tbPath));
-
-            if(files==null) { return; }
             int fileIndex = files.FindIndex(f => f.Name == name && f.Extension == extension);
 
             if(fileIndex > 0)
@@ -125,15 +118,11 @@ namespace WPF_Image_Gallery
 
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
-            string rootPath = Path.GetDirectoryName(fullPath);
-
-            //string fileName = Path.GetFileNameWithoutExtension(fullPath);
-
             List<ListViewItemModel> files = ioManager.Read<List<ListViewItemModel>>(System.IO.Path.GetFileName(tbPath));
 
-            string extension = System.IO.Path.GetExtension(fullPath);
-
             if(files == null) { return; }
+
+            string extension = System.IO.Path.GetExtension(fullPath);
             int fileIndex = files.FindIndex(f => f.Name == name && f.Extension == extension);
 
             if (fileIndex < files.Count - 1)
