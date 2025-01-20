@@ -29,6 +29,6 @@ Image gallery interface
 
 ![Image gallery](Assets/image-gallery.png)
 
-Full screen mode
+Full-screen mode
 
 ![Full Screen Mode](Assets/full-screen-mode.png)
